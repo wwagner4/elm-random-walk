@@ -33,11 +33,11 @@ initialElem = { pos = initialPos }
 initial : Model
 initial = {
   seed = initialSeed 821736182376
-  , elems = List.repeat 20 initialElem }
+  , elems = List.repeat 100 initialElem }
 
 
 diffVal : Float
-diffVal = 20.0
+diffVal = 5.0
 
 
 diffGen : Generator Float
@@ -47,31 +47,38 @@ diffGen = Random.float -diffVal diffVal
 ranDiff : Seed -> (Float, Seed)
 ranDiff seed = generate diffGen seed
 
-
-updateValue : Float -> Float -> Seed -> Float -> (Float, Seed)
-updateValue min max seed value =
+updateX : PanelDim -> Seed -> Pos -> (Float, Seed)
+updateX panel seed pos =
   let
     (diff, nextSeed) = ranDiff seed
-    maxCorr = if value > max then (-diffVal / 100) else 0
-    minCorr = if value < min then (diffVal / 100) else 0
-    next = value + diff + maxCorr + minCorr
+    max = panel.w / 2.0
+    corr1 = if (pos.x > max * 0.9) then -diffVal else 0
+    corr2 = if (pos.x < -max * 0.9) then diffVal else 0
+    nextX = pos.x + diff + corr1 + corr2
   in
-    (next, nextSeed)
+    (nextX, nextSeed)
+
+
+updateY : PanelDim -> Seed -> Pos -> (Float, Seed)
+updateY panel seed pos =
+  let
+    (diff, nextSeed) = ranDiff seed
+    max = panel.h / 2.0
+    corr1 = if (pos.y > max * 0.9) then -diffVal else 0
+    corr2 = if (pos.y < -max * 0.9) then diffVal else 0
+    nextY = pos.y + diff + corr1 + corr2
+  in
+    (nextY, nextSeed)
 
 
 updatePos : PanelDim -> Seed -> Pos -> (Pos, Seed)
 updatePos panel seed pos =
   let
-    border = 0
-    maxX = panel.w - border
-    minX = -panel.w + border
-    maxY = panel.h - border
-    minY = -panel.h + border
-    (nextX, s1) = updateValue minX maxX seed pos.x
-    (nextY, nextSeed) = updateValue minY maxY s1 pos.y
+    (nextX, s1) = updateX panel seed pos
+    (nextY, s2) = updateY panel s1 pos
     nextPos = { pos | x = nextX , y = nextY }
   in
-    (nextPos, nextSeed)
+    (nextPos, s2)
 
 
 updateElem : PanelDim -> Seed -> Elem -> (Elem, Seed)
