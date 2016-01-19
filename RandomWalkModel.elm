@@ -90,22 +90,22 @@ updateElem panel seed elem =
     (nextElem, nextSeed)
 
 
-updateFoldElem : Elem -> (List Elem, Seed, PanelDim) -> (List Elem, Seed, PanelDim)
-updateFoldElem elem (elems, seed, panelDim) =
+updateFoldElem : Elem -> (PanelDim, Seed, List Elem) -> (PanelDim, Seed, List Elem)
+updateFoldElem elem (panelDim, seed, elems) =
   let
     (nextElem, nextSeed) = updateElem panelDim seed elem
     nextElems = nextElem :: elems
   in
-    (nextElems, nextSeed, panelDim)
+    (panelDim, nextSeed, nextElems)
 
 
 update : PanelDim -> Model -> Model
 update panelDim model =
   let
-    (nextElems, nextSeed, panelDim) =
+    (panelDim, nextSeed, nextElems) =
       List.foldl
         updateFoldElem
-        ([], model.seed, panelDim)
+        (panelDim, model.seed, [])
         model.elems
   in
     { model |
