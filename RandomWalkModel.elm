@@ -47,13 +47,17 @@ diffGen = Random.float -diffVal diffVal
 ranDiff : Seed -> (Float, Seed)
 ranDiff seed = generate diffGen seed
 
+
+border = 100
+
+
 updateX : PanelDim -> Seed -> Pos -> (Float, Seed)
 updateX panel seed pos =
   let
     (diff, nextSeed) = ranDiff seed
     max = panel.w / 2.0
-    corr1 = if (pos.x > max * 0.9) then -diffVal else 0
-    corr2 = if (pos.x < -max * 0.9) then diffVal else 0
+    corr1 = if pos.x > max - border then -diffVal else 0
+    corr2 = if pos.x < -max + border then diffVal else 0
     nextX = pos.x + diff + corr1 + corr2
   in
     (nextX, nextSeed)
@@ -64,8 +68,8 @@ updateY panel seed pos =
   let
     (diff, nextSeed) = ranDiff seed
     max = panel.h / 2.0
-    corr1 = if (pos.y > max * 0.9) then -diffVal else 0
-    corr2 = if (pos.y < -max * 0.9) then diffVal else 0
+    corr1 = if pos.y > max - border then -diffVal else 0
+    corr2 = if pos.y < -max + border then diffVal else 0
     nextY = pos.y + diff + corr1 + corr2
   in
     (nextY, nextSeed)

@@ -7,13 +7,13 @@ import Color exposing (..)
 
 
 shape : Shape
-shape = circle 10.0
+shape = circle 20.0
 
 
 form : Shape -> Form
 form shape = shape
   |> filled Color.green
-  |> alpha 0.5
+  |> alpha 0.7
 
 
 toForm : Elem -> Form
