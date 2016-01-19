@@ -7,7 +7,7 @@ import Color exposing (..)
 
 
 shape : Shape
-shape = circle 70.0
+shape = circle 10.0
 
 
 form : Shape -> Form
