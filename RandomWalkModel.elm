@@ -37,7 +37,7 @@ initial = {
 
 
 diffVal : Float
-diffVal = 5.0
+diffVal = 50.0
 
 
 diffGen : Generator Float
@@ -48,39 +48,35 @@ ranDiff : Seed -> (Float, Seed)
 ranDiff seed = generate diffGen seed
 
 
-border = 100
-
-
-updateX : PanelDim -> Seed -> Pos -> (Float, Seed)
-updateX panel seed pos =
+updateVal : Seed -> Float -> (Float, Seed)
+updateVal seed val =
   let
     (diff, nextSeed) = ranDiff seed
-    max = panel.w / 2.0
-    corr1 = if pos.x > max - border then -diffVal else 0
-    corr2 = if pos.x < -max + border then diffVal else 0
-    nextX = pos.x + diff + corr1 + corr2
+    nextVal = val + diff
   in
-    (nextX, nextSeed)
+    (nextVal, nextSeed)
 
 
-updateY : PanelDim -> Seed -> Pos -> (Float, Seed)
-updateY panel seed pos =
+adjustVal : Float -> Float -> Float
+adjustVal span val =
   let
-    (diff, nextSeed) = ranDiff seed
-    max = panel.h / 2.0
-    corr1 = if pos.y > max - border then -diffVal else 0
-    corr2 = if pos.y < -max + border then diffVal else 0
-    nextY = pos.y + diff + corr1 + corr2
+    maxVal = span / 2.0
+    minVal = -maxVal
+    r1 = min val maxVal
+    r2 = max r1 minVal
   in
-    (nextY, nextSeed)
+    r2
 
 
 updatePos : PanelDim -> Seed -> Pos -> (Pos, Seed)
 updatePos panel seed pos =
   let
-    (nextX, s1) = updateX panel seed pos
-    (nextY, s2) = updateY panel s1 pos
-    nextPos = { pos | x = nextX , y = nextY }
+    border = 50
+    (nextX, s1) = updateVal seed pos.x
+    (nextY, s2) = updateVal s1 pos.y
+    adjX = adjustVal (panel.w - border * 2) nextX
+    adjY = adjustVal (panel.h - border * 2) nextY
+    nextPos = { pos | x = adjX , y = adjY }
   in
     (nextPos, s2)
 
