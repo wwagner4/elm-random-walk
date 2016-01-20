@@ -3,24 +3,19 @@ module RandomWalkModel where
 import Random exposing (..)
 
 
-type alias PanelDim = {
-  w : Float
-  , h : Float
-}
+type alias PanelDim =
+  { w : Float
+  , h : Float }
 
-type alias Pos = {
-  x: Float
-  , y : Float
-}
+type alias Pos =
+  { x: Float
+  , y : Float }
 
-type alias Elem = {
-  pos : Pos
-}
+type alias Elem = { pos : Pos }
 
-type alias Model = {
-  seed : Seed
-  , elems : List Elem
-}
+type alias Model =
+  { seed : Seed
+  , elems : List Elem }
 
 initialPos : Pos
 initialPos = { x = 0.0, y = 0.0 }
@@ -31,21 +26,18 @@ initialElem = { pos = initialPos }
 
 
 initial : Model
-initial = {
-  seed = initialSeed 821736182376
+initial =
+  { seed = initialSeed 821736182376
   , elems = List.repeat 100 initialElem }
 
 
-diffVal : Float
-diffVal = 50.0
-
-
-diffGen : Generator Float
-diffGen = Random.float -diffVal diffVal
-
-
 ranDiff : Seed -> (Float, Seed)
-ranDiff seed = generate diffGen seed
+ranDiff seed =
+  let
+    diffVal = 5.0
+    gen = Random.float -diffVal diffVal
+  in
+    generate gen seed
 
 
 updateVal : Seed -> Float -> (Float, Seed)
