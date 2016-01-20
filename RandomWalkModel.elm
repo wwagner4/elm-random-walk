@@ -63,16 +63,25 @@ initial : Time -> Model
 initial startTime =
   let
     seed = initialSeed (round startTime)
-    (elem, nextSeed) = initialElem seed
+    elems = initialElems 30 seed
   in
-    { seed = nextSeed
-    , elems = List.repeat 100 elem }
+    { seed = seed
+    , elems = elems }
+
+initialElems : Int -> Seed -> List Elem
+initialElems cnt seed =
+  if cnt == 0 then []
+  else
+    let
+      (elem, nextSeed) = initialElem seed
+    in
+      elem :: (initialElems (cnt - 1) nextSeed)
 
 
 ranDiff : Seed -> (Float, Seed)
 ranDiff seed =
   let
-    diffVal = 5.0
+    diffVal = 3.0
     gen = Random.float -diffVal diffVal
   in
     generate gen seed

@@ -8,13 +8,13 @@ import Maybe exposing (..)
 
 
 shape : Shape
-shape = circle 100.0
+shape = square 15.0
 
 
 form : Shape -> Elem -> Form
 form shape elem = shape
   |> filled elem.color
-  |> alpha 0.1
+  |> alpha 0.9
 
 
 toForm : Elem -> Form
