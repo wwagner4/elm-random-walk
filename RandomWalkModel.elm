@@ -26,16 +26,35 @@ initialPos : Pos
 initialPos = { x = 0.0, y = 0.0 }
 
 
-initialElem : Elem
-initialElem =
-  { pos = initialPos
-  , color = Color.yellow }
+ranColor : Seed -> (Color, Seed)
+ranColor seed =
+  let
+    gen = Random.float 0 360
+    (ranDeg, nextSeed) = generate gen seed
+    col = hsl (degrees ranDeg) 1 0.5
+  in
+    (col, nextSeed)
+
+
+initialElem : Seed -> (Elem, Seed)
+initialElem seed =
+  let
+    (col, nextSeed) = ranColor seed
+    elem =
+      { pos = initialPos
+      , color = col }
+  in
+    (elem, nextSeed)
 
 
 initial : Model
 initial =
-  { seed = initialSeed 821736182376
-  , elems = List.repeat 100 initialElem }
+  let
+    seed = initialSeed 82173618237
+    (elem, nextSeed) = initialElem seed
+  in
+    { seed = nextSeed
+    , elems = List.repeat 100 elem }
 
 
 ranDiff : Seed -> (Float, Seed)
