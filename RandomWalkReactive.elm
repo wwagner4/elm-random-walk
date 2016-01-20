@@ -5,7 +5,7 @@ import Signal exposing (..)
 import Window exposing (..)
 import Time exposing (..)
 import Graphics.Element exposing (..)
-
+import Maybe exposing (..)
 
 
 timeSig : Signal Time
@@ -31,16 +31,16 @@ inp time panelDim =
 
 inpSig : Signal Inp
 inpSig =
-  map2 inp timeSig panelDimSig
+  Signal.map2 inp timeSig panelDimSig
 
 
 
-modelSig : Signal Model
+modelSig : Signal (Maybe Model)
 modelSig =
   let
     initialModel = initial 39398127
   in
-    Signal.foldp update initialModel inpSig
+    Signal.foldp update Nothing inpSig
 
 
 main : Signal Element

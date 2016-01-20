@@ -3,6 +3,7 @@ module RandomWalkModel where
 import Random exposing (..)
 import Color exposing (..)
 import Time exposing (..)
+import Maybe exposing (..)
 
 
 type alias PanelDim =
@@ -51,6 +52,11 @@ initialElem seed =
       , color = col }
   in
     (elem, nextSeed)
+
+
+emptyModel =
+  { seed = initialSeed 0
+  , elems = [] }
 
 
 initial : Time -> Model
@@ -123,15 +129,17 @@ updateFoldElem elem (panelDim, seed, elems) =
     (panelDim, nextSeed, nextElems)
 
 
-update : Inp -> Model -> Model
-update inp model =
+update : Inp -> Maybe Model -> Maybe Model
+update inp maybeModel =
   let
+    model = withDefault (initial inp.time) maybeModel
     (panelDim, nextSeed, nextElems) =
       List.foldl
         updateFoldElem
         (inp.panelDim, model.seed, [])
         model.elems
-  in
-    { model |
+    nextModel = { model |
       elems = nextElems
       , seed = nextSeed }
+  in
+    Just nextModel

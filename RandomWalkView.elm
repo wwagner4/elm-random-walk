@@ -4,6 +4,7 @@ import RandomWalkModel exposing (..)
 import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
 import Color exposing (..)
+import Maybe exposing (..)
 
 
 shape : Shape
@@ -26,10 +27,11 @@ toForm elem =
       |> move (x, y)
 
 
-view : PanelDim -> Model -> Element
-view panel model =
+view : PanelDim -> Maybe Model -> Element
+view panel maybeModel =
   let
     w = round panel.w
     h = round panel.h
+    model = withDefault emptyModel maybeModel
   in
     collage w h (List.map toForm model.elems)
