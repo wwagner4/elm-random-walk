@@ -27,8 +27,14 @@ panelDimTriggered =
   Signal.sampleOn time (panelDim Window.dimensions)
 
 
+modelSig : Signal Model
+modelSig =
+  let
+    initialModel = initial 39398127
+  in
+    Signal.foldp update initialModel panelDimTriggered
+
+
 main : Signal Element
-main = Signal.map2
-  view
-  (panelDim Window.dimensions)
-  (Signal.foldp update initial panelDimTriggered)
+main =
+  Signal.map2 view (panelDim Window.dimensions) modelSig

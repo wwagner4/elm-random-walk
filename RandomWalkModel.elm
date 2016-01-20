@@ -2,6 +2,7 @@ module RandomWalkModel where
 
 import Random exposing (..)
 import Color exposing (..)
+import Time exposing (..)
 
 
 type alias PanelDim =
@@ -47,10 +48,10 @@ initialElem seed =
     (elem, nextSeed)
 
 
-initial : Model
-initial =
+initial : Time -> Model
+initial startTime =
   let
-    seed = initialSeed 82173618237
+    seed = initialSeed (round startTime)
     (elem, nextSeed) = initialElem seed
   in
     { seed = nextSeed
