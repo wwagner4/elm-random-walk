@@ -13,9 +13,11 @@ type alias Pos =
 
 type alias Elem = { pos : Pos }
 
+
 type alias Model =
   { seed : Seed
   , elems : List Elem }
+
 
 initialPos : Pos
 initialPos = { x = 0.0, y = 0.0 }
