@@ -8,8 +8,8 @@ import Graphics.Element exposing (..)
 
 
 
-time : Signal Time
-time = Time.every (Time.millisecond * 10)
+timeSig : Signal Time
+timeSig = Time.every (Time.millisecond * 10)
 
 
 toPanelDim : (Int, Int) -> PanelDim
@@ -18,13 +18,21 @@ toPanelDim (x, y) = {
   , h = toFloat y }
 
 
-panelDim : Signal (Int, Int) -> Signal PanelDim
-panelDim dimensions = Signal.map toPanelDim dimensions
+panelDimSig : Signal PanelDim
+panelDimSig =
+  Signal.map toPanelDim Window.dimensions
 
 
-panelDimTriggered : Signal PanelDim
-panelDimTriggered =
-  Signal.sampleOn time (panelDim Window.dimensions)
+inp : Time -> PanelDim -> Inp
+inp time panelDim =
+  { time = time
+  , panelDim = panelDim }
+
+
+inpSig : Signal Inp
+inpSig =
+  map2 inp timeSig panelDimSig
+
 
 
 modelSig : Signal Model
@@ -32,9 +40,9 @@ modelSig =
   let
     initialModel = initial 39398127
   in
-    Signal.foldp update initialModel panelDimTriggered
+    Signal.foldp update initialModel inpSig
 
 
 main : Signal Element
 main =
-  Signal.map2 view (panelDim Window.dimensions) modelSig
+  Signal.map2 view panelDimSig modelSig

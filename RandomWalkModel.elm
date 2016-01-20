@@ -23,6 +23,11 @@ type alias Model =
   , elems : List Elem }
 
 
+type alias Inp =
+  { time : Time
+  , panelDim : PanelDim }
+
+
 initialPos : Pos
 initialPos = { x = 0.0, y = 0.0 }
 
@@ -118,13 +123,13 @@ updateFoldElem elem (panelDim, seed, elems) =
     (panelDim, nextSeed, nextElems)
 
 
-update : PanelDim -> Model -> Model
-update panelDim model =
+update : Inp -> Model -> Model
+update inp model =
   let
     (panelDim, nextSeed, nextElems) =
       List.foldl
         updateFoldElem
-        (panelDim, model.seed, [])
+        (inp.panelDim, model.seed, [])
         model.elems
   in
     { model |
