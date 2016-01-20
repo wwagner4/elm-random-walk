@@ -10,9 +10,9 @@ shape : Shape
 shape = circle 100.0
 
 
-form : Shape -> Form
-form shape = shape
-  |> filled Color.green
+form : Shape -> Elem -> Form
+form shape elem = shape
+  |> filled elem.color
   |> alpha 0.1
 
 
@@ -22,7 +22,7 @@ toForm elem =
     x = elem.pos.x
     y = elem.pos.y
   in
-    form shape
+    form shape elem
       |> move (x, y)
 
 

@@ -1,6 +1,7 @@
 module RandomWalkModel where
 
 import Random exposing (..)
+import Color exposing (..)
 
 
 type alias PanelDim =
@@ -11,7 +12,9 @@ type alias Pos =
   { x: Float
   , y : Float }
 
-type alias Elem = { pos : Pos }
+type alias Elem =
+  { pos : Pos
+  , color : Color }
 
 
 type alias Model =
@@ -24,7 +27,9 @@ initialPos = { x = 0.0, y = 0.0 }
 
 
 initialElem : Elem
-initialElem = { pos = initialPos }
+initialElem =
+  { pos = initialPos
+  , color = Color.yellow }
 
 
 initial : Model
