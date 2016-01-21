@@ -27,13 +27,12 @@ toForm elem =
       |> move (x, y)
 
 
-toForms : (Model, any) -> List Form
-toForms (model, seed) =
+toForms : Model -> List Form
+toForms model =
   List.map toForm model.elems
 
 
--- TODO Remove the any param that is not needed
-view : PanelDim -> Maybe (Model, any) -> Element
+view : PanelDim -> Maybe Model -> Element
 view panel maybeModel =
   let
     w = round panel.w
