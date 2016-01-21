@@ -34,13 +34,13 @@ inpSig =
   Signal.map2 inp timeSig panelDimSig
 
 
-leftSig : Signal (Maybe (left, right)) -> Signal (Maybe left)
-leftSig sig =
+leftMaybeSig : Signal (Maybe (left, right)) -> Signal (Maybe left)
+leftMaybeSig sig =
   let
     left (l, r) = l
-    leftSig1 tuple = Maybe.map left tuple
+    leftMaybe tuple = Maybe.map left tuple
   in
-    Signal.map leftSig1 sig
+    Signal.map leftMaybe sig
 
 
 main : Signal Element
@@ -48,4 +48,4 @@ main =
   let
     modelSig = Signal.foldp update Nothing inpSig
   in
-    Signal.map2 view panelDimSig (leftSig modelSig)
+    Signal.map2 view panelDimSig (leftMaybeSig modelSig)
