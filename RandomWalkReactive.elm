@@ -34,15 +34,9 @@ inpSig =
   Signal.map2 inp timeSig panelDimSig
 
 
-
-modelSig : Signal (Maybe Model)
-modelSig =
-  let
-    initialModel = initial 39398127
-  in
-    Signal.foldp update Nothing inpSig
-
-
 main : Signal Element
 main =
-  Signal.map2 view panelDimSig modelSig
+  let
+    modelSig = Signal.foldp update Nothing inpSig
+  in
+    Signal.map2 view panelDimSig modelSig
