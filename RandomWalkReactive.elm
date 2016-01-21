@@ -9,7 +9,7 @@ import Maybe exposing (..)
 
 
 timeSig : Signal Time
-timeSig = Time.every (Time.millisecond)
+timeSig = Time.every (Time.millisecond / 10)
 
 
 toPanelDim : (Int, Int) -> PanelDim

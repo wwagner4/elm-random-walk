@@ -35,7 +35,7 @@ initialPos = { x = 0.0, y = 0.0 }
 ranColor : Seed -> (Color, Seed)
 ranColor seed =
   let
-    gen = Random.float 0 360
+    gen = Random.float 0 150
     (ranDeg, nextSeed) = generate gen seed
     col = hsl (degrees ranDeg) 1 0.5
   in
@@ -69,7 +69,7 @@ initial : Time -> (Model, Seed)
 initial startTime =
   let
     s1 = initialSeed (round startTime)
-    (elems, s2) = initialElems 30 s1
+    (elems, s2) = initialElems 3 s1
     model =
       { elems = elems }
     in
@@ -79,7 +79,7 @@ initial startTime =
 ranDiff : Seed -> (Float, Seed)
 ranDiff seed =
   let
-    diffVal = 3.0
+    diffVal = 2.0
     gen = Random.float -diffVal diffVal
   in
     generate gen seed
