@@ -54,28 +54,33 @@ initialElem seed =
     (elem, nextSeed)
 
 
-emptyModel =
-  { seed = initialSeed 0
-  , elems = [] }
+initialElems : Int -> Seed -> (List Elem, Seed)
+initialElems cnt seed =
+  if cnt == 0 then ([], seed)
+  else
+    let
+      (elem, s1) = initialElem seed
+      (restElems, s2) = initialElems (cnt - 1) s1
+      elems = elem :: restElems
+    in
+      (elems, s2)
 
 
 initial : Time -> Model
 initial startTime =
   let
-    seed = initialSeed (round startTime)
-    elems = initialElems 30 seed
-  in
-    { seed = seed
-    , elems = elems }
-
-initialElems : Int -> Seed -> List Elem
-initialElems cnt seed =
-  if cnt == 0 then []
-  else
-    let
-      (elem, nextSeed) = initialElem seed
+    s1 = initialSeed (round startTime)
+    (elems, s2) = initialElems 30 s1
+    model =
+      { seed = s2
+      , elems = elems }
     in
-      elem :: (initialElems (cnt - 1) nextSeed)
+      model
+
+
+emptyModel =
+  { seed = initialSeed 0
+  , elems = [] }
 
 
 ranDiff : Seed -> (Float, Seed)
@@ -141,14 +146,18 @@ updateFoldElem elem (panelDim, seed, elems) =
 update : Inp -> Maybe Model -> Maybe Model
 update inp maybeModel =
   let
+
     model = withDefault (initial inp.time) maybeModel
+
     (panelDim, nextSeed, nextElems) =
       List.foldl
         updateFoldElem
         (inp.panelDim, model.seed, [])
         model.elems
+
     nextModel = { model |
       elems = nextElems
       , seed = nextSeed }
+
   in
     Just nextModel
