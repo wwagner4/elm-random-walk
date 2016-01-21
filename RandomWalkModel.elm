@@ -20,8 +20,7 @@ type alias Elem =
 
 
 type alias Model =
-  { seed : Seed
-  , elems : List Elem }
+  { elems : List Elem }
 
 
 type alias Inp =
@@ -66,21 +65,15 @@ initialElems cnt seed =
       (elems, s2)
 
 
-initial : Time -> Model
+initial : Time -> (Model, Seed)
 initial startTime =
   let
     s1 = initialSeed (round startTime)
     (elems, s2) = initialElems 30 s1
     model =
-      { seed = s2
-      , elems = elems }
+      { elems = elems }
     in
-      model
-
-
-emptyModel =
-  { seed = initialSeed 0
-  , elems = [] }
+      (model, s2)
 
 
 ranDiff : Seed -> (Float, Seed)
@@ -143,21 +136,19 @@ updateFoldElem elem (panelDim, seed, elems) =
     (panelDim, nextSeed, nextElems)
 
 
-update : Inp -> Maybe Model -> Maybe Model
+update : Inp -> Maybe (Model, Seed) -> Maybe (Model, Seed)
 update inp maybeModel =
   let
 
-    model = withDefault (initial inp.time) maybeModel
+    (model, seed) = withDefault (initial inp.time) maybeModel
 
     (panelDim, nextSeed, nextElems) =
       List.foldl
         updateFoldElem
-        (inp.panelDim, model.seed, [])
+        (inp.panelDim, seed, [])
         model.elems
 
-    nextModel = { model |
-      elems = nextElems
-      , seed = nextSeed }
+    nextModel = { model | elems = nextElems }
 
   in
-    Just nextModel
+    Just (nextModel, nextSeed)

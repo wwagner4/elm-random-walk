@@ -6,6 +6,7 @@ import Window exposing (..)
 import Time exposing (..)
 import Graphics.Element exposing (..)
 import Maybe exposing (..)
+import Random exposing (..) -- TODO random should not be used here
 
 
 timeSig : Signal Time
@@ -35,12 +36,9 @@ inpSig =
 
 
 
-modelSig : Signal (Maybe Model)
+modelSig : Signal (Maybe (Model, Seed))
 modelSig =
-  let
-    initialModel = initial 39398127
-  in
-    Signal.foldp update Nothing inpSig
+  Signal.foldp update Nothing inpSig
 
 
 main : Signal Element

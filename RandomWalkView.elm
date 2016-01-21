@@ -27,11 +27,17 @@ toForm elem =
       |> move (x, y)
 
 
-view : PanelDim -> Maybe Model -> Element
+toForms : (Model, any) -> List Form
+toForms (model, seed) =
+  List.map toForm model.elems
+
+
+view : PanelDim -> Maybe (Model, any) -> Element
 view panel maybeModel =
   let
     w = round panel.w
     h = round panel.h
-    model = withDefault emptyModel maybeModel
+    maybeForms = Maybe.map toForms maybeModel
+    forms = withDefault [] maybeForms
   in
-    collage w h (List.map toForm model.elems)
+    collage w h forms
