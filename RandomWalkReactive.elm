@@ -6,7 +6,6 @@ import Window exposing (..)
 import Time exposing (..)
 import Graphics.Element exposing (..)
 import Maybe exposing (..)
-import Random exposing (..) -- TODO random should not be used here
 
 
 timeSig : Signal Time
@@ -35,12 +34,9 @@ inpSig =
   Signal.map2 inp timeSig panelDimSig
 
 
-
-modelSig : Signal (Maybe (Model, Seed))
-modelSig =
-  Signal.foldp update Nothing inpSig
-
-
 main : Signal Element
 main =
-  Signal.map2 view panelDimSig modelSig
+  let
+    modelSig = Signal.foldp update Nothing inpSig
+  in
+    Signal.map2 view panelDimSig modelSig
