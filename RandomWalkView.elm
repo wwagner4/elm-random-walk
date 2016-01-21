@@ -31,14 +31,33 @@ toForms : (Model, any) -> List Form
 toForms (model, seed) =
   List.map toForm model.elems
 
+toForms1 : Model -> List Form
+toForms1 model =
+  List.map toForm model.elems
 
--- TODO Remove the any param that is not needed
+
+
+transform : Maybe (a, b) -> Maybe a
+transform tupl =
+  Maybe.map (\(a, b) -> a) tupl
+
+
 view : PanelDim -> Maybe (Model, any) -> Element
 view panel maybeModel =
   let
     w = round panel.w
     h = round panel.h
     maybeForms = Maybe.map toForms maybeModel
+    forms = withDefault [] maybeForms
+  in
+    collage w h forms
+
+view1 : PanelDim -> Maybe Model -> Element
+view1 panel maybeModel =
+  let
+    w = round panel.w
+    h = round panel.h
+    maybeForms = Maybe.map toForms1 maybeModel
     forms = withDefault [] maybeForms
   in
     collage w h forms
