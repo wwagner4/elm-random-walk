@@ -32,8 +32,8 @@ toForms model =
   List.map toForm model.elems
 
 
-view1 : PanelDim -> Maybe Model -> Element
-view1 panel maybeModel =
+view : PanelDim -> Maybe Model -> Element
+view panel maybeModel =
   let
     w = round panel.w
     h = round panel.h
