@@ -32,6 +32,7 @@ toForms (model, seed) =
   List.map toForm model.elems
 
 
+-- TODO Remove the any param that is not needed
 view : PanelDim -> Maybe (Model, any) -> Element
 view panel maybeModel =
   let
