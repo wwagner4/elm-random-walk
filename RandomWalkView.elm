@@ -27,12 +27,8 @@ toForm elem =
       |> move (x, y)
 
 
-toForms : (Model, any) -> List Form
-toForms (model, seed) =
-  List.map toForm model.elems
-
-toForms1 : Model -> List Form
-toForms1 model =
+toForms : Model -> List Form
+toForms model =
   List.map toForm model.elems
 
 
@@ -43,21 +39,16 @@ transform tupl =
 
 
 view : PanelDim -> Maybe (Model, any) -> Element
-view panel maybeModel =
-  let
-    w = round panel.w
-    h = round panel.h
-    maybeForms = Maybe.map toForms maybeModel
-    forms = withDefault [] maybeForms
-  in
-    collage w h forms
+view panel maybeTuple =
+  view1 panel (transform maybeTuple)
+
 
 view1 : PanelDim -> Maybe Model -> Element
 view1 panel maybeModel =
   let
     w = round panel.w
     h = round panel.h
-    maybeForms = Maybe.map toForms1 maybeModel
+    maybeForms = Maybe.map toForms maybeModel
     forms = withDefault [] maybeForms
   in
     collage w h forms
