@@ -34,9 +34,19 @@ inpSig =
   Signal.map2 inp timeSig panelDimSig
 
 
+transform : Maybe (a, b) -> Maybe a
+transform tupl =
+  Maybe.map (\(a, b) -> a) tupl
+
+
+transformModel : Signal (Maybe (a, b)) -> Signal (Maybe a)
+transformModel c =
+  Signal.map transform c
+
+
 main : Signal Element
 main =
   let
     modelSig = Signal.foldp update Nothing inpSig
   in
-    Signal.map2 view panelDimSig modelSig
+    Signal.map2 view1 panelDimSig (transformModel modelSig)

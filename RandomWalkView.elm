@@ -32,17 +32,6 @@ toForms model =
   List.map toForm model.elems
 
 
-
-transform : Maybe (a, b) -> Maybe a
-transform tupl =
-  Maybe.map (\(a, b) -> a) tupl
-
-
-view : PanelDim -> Maybe (Model, any) -> Element
-view panel maybeTuple =
-  view1 panel (transform maybeTuple)
-
-
 view1 : PanelDim -> Maybe Model -> Element
 view1 panel maybeModel =
   let
