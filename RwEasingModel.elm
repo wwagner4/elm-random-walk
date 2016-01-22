@@ -9,18 +9,18 @@ showTime time = show time
 
 
 timeSig : Signal Time
-timeSig = foldp (\a b -> b + 1) 0 (Time.fps 2)
+timeSig = foldp (\a b -> b + 10) 0 (Time.fps 10)
 
 
 anim : Time -> Float
 anim currentTime =
-    ease easeInCubic float 0 10 second currentTime
+    ease easeOutBack float 0 10 second currentTime
 
 
 showAnim : Time -> Element
 showAnim time =
-  show (anim time)
+  show (time, (anim time))
 
 
 main : Signal Element
-main = Signal.map showTime timeSig
+main = Signal.map showAnim timeSig
