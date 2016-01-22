@@ -7,5 +7,9 @@ showTime : Time -> Element
 showTime time = show time
 
 
+timeSig : Signal Time
+timeSig = Time.every (second)
+
+
 main : Signal Element
-main = Signal.map showTime (Time.every (second / 100))
+main = Signal.map showTime timeSig
