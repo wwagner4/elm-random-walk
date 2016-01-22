@@ -1,5 +1,6 @@
 import Time exposing (..)
 import Easing exposing (..)
+import Signal exposing (..)
 import Graphics.Element exposing (..)
 
 
@@ -8,7 +9,17 @@ showTime time = show time
 
 
 timeSig : Signal Time
-timeSig = Time.every (second)
+timeSig = foldp (\a b -> b + 1) 0 (Time.fps 2)
+
+
+anim : Time -> Float
+anim currentTime =
+    ease easeInCubic float 0 10 second currentTime
+
+
+showAnim : Time -> Element
+showAnim time =
+  show (anim time)
 
 
 main : Signal Element
