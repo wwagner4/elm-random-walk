@@ -1,6 +1,7 @@
-module RandomWalkView where
+module RwBasicView where
 
-import RandomWalkModel exposing (..)
+import RwBasicModel exposing (..)
+
 import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
 import Color exposing (..)

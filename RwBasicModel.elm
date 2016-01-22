@@ -1,4 +1,4 @@
-module RandomWalkModel where
+module RwBasicModel where
 
 import Random exposing (..)
 import Color exposing (..)

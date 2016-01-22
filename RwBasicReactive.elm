@@ -1,7 +1,7 @@
-module RandomWalkerReactive where
+module RwBasicReactive where
 
-import RandomWalkModel exposing (..)
-import RandomWalkView exposing (..)
+import RwBasicModel exposing (..)
+import RwBasicView exposing (..)
 
 import Signal exposing (..)
 import Window exposing (..)
