@@ -1,0 +1,16 @@
+<project name="rw" default="build">
+  <target name="build">
+    <exec executable="elm-make">
+      <arg value="RwBasicReactive.elm"/>
+      <arg value="--output"/>
+      <arg value="hp/rwbasic.js"/>
+    </exec>
+    <copy todir="/Users/wwagner4/prj/entelijan-homepage/elm-random-walk">
+      <fileset dir="hp">
+        <include name="*"></include>
+      </fileset>
+    </copy>
+
+  </target>
+
+</project>
