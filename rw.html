@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Elm-RandomWalk</title>
+<meta charset="utf-8">
+<link href='https://fonts.googleapis.com/css?family=Special+Elite' rel='stylesheet' type='text/css'>
+<style>
+body {font-family: 'Special Elite', cursive; font-size:0.8em;padding-left:30px; padding-right: 30px}
+header, nav, section, article, footer
+{border:0px solid grey; margin:0px; padding:5px;}
+#rw {height: 300px; background-color: white; border:1px solid grey; margin-left: 100px; margin-right: 100px}
+</style>
+</head>
+<script src="elm.js"></script>
+<body>
+
+<header>
+<h1>Random Walk</h1>
+</header>
+<section>
+<p>
+Exploring Elm by implementing animated random walkers.
+</p>
+</section>
+
+<section>
+
+<article>
+<h2>Basic</h2>
+<p>Adresses the following problems: Separation of model and view. Handling of random values. Random initialisation by time</p>
+
+<div id="rw"></div>
+
+</article>
+
+</section>
+
+<footer>
+<p>&copy; <a href="http://entelijan.net">entelijan.net</a></p>
+</footer>
+
+<script type="text/javascript">
+    var rwDiv = document.getElementById('rw');
+    Elm.embed(Elm.RandomWalkerReactive, rwDiv);
+  </script>
+</body>
+</html>

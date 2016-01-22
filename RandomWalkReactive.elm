@@ -1,3 +1,5 @@
+module RandomWalkerReactive where
+
 import RandomWalkModel exposing (..)
 import RandomWalkView exposing (..)
 
