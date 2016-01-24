@@ -8,15 +8,6 @@ import Color exposing (..)
 
 import RwEasingModel exposing (..)
 
-viewTime : Time -> Element
-viewTime time = show time
-
-
-viewAnim : Time -> Element
-viewAnim time =
-  show (time, (anim time))
-  
-  
 toForm : Model -> Form
 toForm model =
   circle 50

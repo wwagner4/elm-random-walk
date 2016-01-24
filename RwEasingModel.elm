@@ -18,7 +18,8 @@ type alias Model =
   
 type alias Anim =
   { startVal : Float
-  , startTime : Time }
+  , startTime : Time 
+  , duration : Time }
 
 
 initial : Time -> Model
@@ -29,10 +30,9 @@ initial time =
   , seed = initialSeed (round time) }
 
 
-animEaseValue : Time -> Float
-animEaseValue relTime =
+animEaseValue : Time -> Time -> Float
+animEaseValue relTime duration =
   let
-    duration = second * 5
     from = 0
     to = 300
   in
@@ -43,7 +43,7 @@ animValue : Time -> Anim -> Float
 animValue time anim= 
   let
     relTime = time - anim.startTime
-    diff = animEaseValue relTime 
+    diff = animEaseValue relTime anim.duration 
   in 
     anim.startVal + diff
     
@@ -56,8 +56,14 @@ updateAnimModel time anim model =
 
 updateNoAnimModel : Time -> Model -> Model
 updateNoAnimModel time model = 
-  { model | 
-    anim = Just {startVal = model.x, startTime = time} }
+  let 
+    newAnim = 
+      { startVal = model.x 
+      , startTime = time
+      , duration = second * 1 }
+  in
+    { model | 
+      anim = Just newAnim }
 
 
 updateModel : Time -> Maybe Model -> Maybe Model
