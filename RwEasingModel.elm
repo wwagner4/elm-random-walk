@@ -31,7 +31,12 @@ initial time =
 
 animEaseValue : Time -> Float
 animEaseValue relTime =
-    ease easeOutElastic Easing.float 0 400 (second * 5) relTime
+  let
+    duration = second * 5
+    from = 0
+    to = 300
+  in
+    ease easeOutElastic Easing.float from to duration relTime
 
 
 animValue : Time -> Anim -> Float
@@ -42,15 +47,25 @@ animValue time anim=
   in 
     anim.startVal + diff
     
+    
+updateAnimModel : Time -> Anim -> Model -> Model
+updateAnimModel time anim model = 
+  { model | 
+    x = animValue time anim }
+  
+
+updateNoAnimModel : Time -> Model -> Model
+updateNoAnimModel time model = 
+  { model | 
+    anim = Just {startVal = model.x, startTime = time} }
+
 
 updateModel : Time -> Maybe Model -> Maybe Model
 updateModel time maybeModel = 
   let
     model = withDefault (initial time) maybeModel
     nextModel = case model.anim of
-      Just anim -> { model | 
-        x = animValue time anim }
-      Nothing -> { model | 
-        anim = Just {startVal = model.x, startTime = time} }
+      Just anim -> updateAnimModel time anim model
+      Nothing -> updateNoAnimModel time model
   in 
     Just nextModel
