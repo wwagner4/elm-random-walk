@@ -11,31 +11,43 @@ import Color exposing (..)
 type alias Model =
   { x : Float
   , y : Float
-  , startX : Float
+  , anim : Maybe Anim }
+  
+  
+type alias Anim =
+  { startVal : Float
   , startTime : Time }
 
 
-initial : Time -> Model
-initial startTime = 
-  { x = -200
+initial : Model
+initial = 
+  { x = 0
   , y = 0
-  , startX = -200
-  , startTime = startTime }
+  , anim = Nothing }
 
 
-anim : Time -> Float
-anim currentTime =
-    ease easeOutBounce float 0 400 (second * 2) currentTime
+animEaseValue : Time -> Float
+animEaseValue relTime =
+    ease easeOutElastic float 0 400 (second * 5) relTime
+
+
+animValue : Time -> Anim -> Float
+animValue time anim= 
+  let
+    relTime = time - anim.startTime
+    diff = animEaseValue relTime 
+  in 
+    anim.startVal + diff
 
 
 updateModel : Time -> Maybe Model -> Maybe Model
 updateModel time maybeModel = 
   let
-    model = withDefault (initial time) maybeModel
-    relTime = time - model.startTime
-    diff = anim relTime 
-    x = model.startX + diff
-    nextModel = { model | 
-      x = model.startX + diff }
+    model = withDefault initial maybeModel
+    nextModel = case model.anim of
+      Just anim -> { model | 
+        x = animValue time anim }
+      Nothing -> { model | 
+        anim = Just {startVal = model.x, startTime = time} }
   in 
     Just nextModel

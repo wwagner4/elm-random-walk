@@ -19,9 +19,9 @@ viewAnim time =
   
 toForm : Model -> Form
 toForm model =
-  circle 20
-    |> filled Color.red
-    |> alpha 0.4
+  circle 50
+    |> filled Color.green
+    |> alpha 0.8
     |> move (model.x, model.y)
   
   
