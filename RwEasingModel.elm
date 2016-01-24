@@ -14,7 +14,11 @@ type alias Model =
   , startTime : Time }
 
 
-
+initial : Model
+initial = 
+  { x = 0
+  , y = 0
+  , startTime = 0 }
 
 
 anim : Time -> Float
@@ -22,3 +26,5 @@ anim currentTime =
     ease easeOutBack float 0 500 second currentTime
 
 
+updateModel : Time -> Model -> Model
+updateModel time model = model

@@ -8,17 +8,17 @@ import Color exposing (..)
 
 import RwEasingModel exposing (..)
 
-showTime : Time -> Element
-showTime time = show time
+viewTime : Time -> Element
+viewTime time = show time
 
 
-showAnim : Time -> Element
-showAnim time =
+viewAnim : Time -> Element
+viewAnim time =
   show (time, (anim time))
 
 
-showModel : Model -> Element
-showModel model =
+viewModel : Model -> Element
+viewModel model =
   let
     shape = circle 20
     form = shape
