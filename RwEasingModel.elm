@@ -5,13 +5,15 @@ import Easing exposing (..)
 import Signal exposing (..)
 import Maybe exposing (..)
 import Color exposing (..)
+import Random exposing (..)
 
 
 
 type alias Model =
   { x : Float
   , y : Float
-  , anim : Maybe Anim }
+  , anim : Maybe Anim 
+  , seed : Seed}
   
   
 type alias Anim =
@@ -19,16 +21,17 @@ type alias Anim =
   , startTime : Time }
 
 
-initial : Model
-initial = 
+initial : Time -> Model
+initial time = 
   { x = 0
   , y = 0
-  , anim = Nothing }
+  , anim = Nothing 
+  , seed = initialSeed (round time) }
 
 
 animEaseValue : Time -> Float
 animEaseValue relTime =
-    ease easeOutElastic float 0 400 (second * 5) relTime
+    ease easeOutElastic Easing.float 0 400 (second * 5) relTime
 
 
 animValue : Time -> Anim -> Float
@@ -38,12 +41,12 @@ animValue time anim=
     diff = animEaseValue relTime 
   in 
     anim.startVal + diff
-
+    
 
 updateModel : Time -> Maybe Model -> Maybe Model
 updateModel time maybeModel = 
   let
-    model = withDefault initial maybeModel
+    model = withDefault (initial time) maybeModel
     nextModel = case model.anim of
       Just anim -> { model | 
         x = animValue time anim }
