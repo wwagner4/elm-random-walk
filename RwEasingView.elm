@@ -17,8 +17,8 @@ viewAnim time =
   show (time, (anim time))
 
 
-viewModel : Model -> Element
-viewModel model =
+viewModel : (Int, Int) -> Model -> Element
+viewModel (width, height) model =
   let
     shape = circle 20
     form = shape
@@ -26,7 +26,7 @@ viewModel model =
       |> alpha 0.4
       |> move (model.x, model.y)
   in
-    collage 500 500 [form]
+    collage width height [form]
 
 
 
