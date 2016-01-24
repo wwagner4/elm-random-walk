@@ -11,20 +11,29 @@ import Color exposing (..)
 type alias Model =
   { x : Float
   , y : Float
+  , startX : Float
   , startTime : Time }
 
 
 initial : Model
 initial = 
-  { x = 0
+  { x = -200
   , y = 0
+  , startX = -200
   , startTime = 0 }
 
 
 anim : Time -> Float
 anim currentTime =
-    ease easeOutBack float 0 500 second currentTime
+    ease easeOutBounce float 0 400 (millisecond * 500) currentTime
 
 
 updateModel : Time -> Model -> Model
-updateModel time model = model
+updateModel time model = 
+  let
+    relTime = time - model.startTime
+    diff = anim relTime 
+    x = model.startX + diff
+  in 
+    { model | 
+      x = model.startX + diff }
