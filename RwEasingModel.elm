@@ -15,25 +15,27 @@ type alias Model =
   , startTime : Time }
 
 
-initial : Model
-initial = 
+initial : Time -> Model
+initial startTime = 
   { x = -200
   , y = 0
   , startX = -200
-  , startTime = 0 }
+  , startTime = startTime }
 
 
 anim : Time -> Float
 anim currentTime =
-    ease easeOutBounce float 0 400 (millisecond * 500) currentTime
+    ease easeOutBounce float 0 400 (second * 2) currentTime
 
 
-updateModel : Time -> Model -> Model
-updateModel time model = 
+updateModel : Time -> Maybe Model -> Maybe Model
+updateModel time maybeModel = 
   let
+    model = withDefault (initial time) maybeModel
     relTime = time - model.startTime
     diff = anim relTime 
     x = model.startX + diff
-  in 
-    { model | 
+    nextModel = { model | 
       x = model.startX + diff }
+  in 
+    Just nextModel

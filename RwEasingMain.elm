@@ -5,13 +5,13 @@ import Graphics.Element exposing (..)
 import Signal exposing (..)
 import Time exposing (..)
 import Window exposing (..)
-
+import Maybe exposing (..)
 
 timeSig : Signal Time
-timeSig = foldp (\a b -> b + 10) 0 (Time.fps 10)
+timeSig = every (Time.millisecond * 10)
 
-modelSig : Signal Model
-modelSig = foldp updateModel initial timeSig
+modelSig : Signal (Maybe Model)
+modelSig = foldp updateModel Nothing timeSig
 
 main : Signal Element
 main = Signal.map2 viewModel Window.dimensions modelSig
