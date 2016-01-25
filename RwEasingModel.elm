@@ -75,12 +75,12 @@ updateNoAnimModel time model =
       anim = Just newAnim }
 
 
-updateModel : Time -> Maybe Model -> Maybe Model
-updateModel time maybeModel = 
+updateModel : Inp -> Maybe Model -> Maybe Model
+updateModel inp maybeModel = 
   let
-    model = withDefault (initial time) maybeModel
+    model = withDefault (initial inp.time) maybeModel
     nextModel = case model.anim of
-      Just anim -> updateAnimModel time anim model
-      Nothing -> updateNoAnimModel time model
+      Just anim -> updateAnimModel inp.time anim model
+      Nothing -> updateNoAnimModel inp.time model
   in 
     Just nextModel
