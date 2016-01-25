@@ -8,17 +8,22 @@ import Color exposing (..)
 
 import RwEasingModel exposing (..)
 
-toForm : Model -> Form
-toForm model =
-  circle 50
+elemToForm : Elem -> Form
+elemToForm elem =
+  rect 30 500
     |> filled Color.green
-    |> alpha 0.8
-    |> move (model.x, model.y)
+    |> alpha 0.1
+    |> move (elem.x, elem.y)
+  
+  
+modelToForm : Model -> List Form
+modelToForm model =
+  List.map elemToForm model.elems
   
   
 toForms : Maybe Model -> List Form
 toForms maybeModel = case maybeModel of
-  Just model -> [toForm model]
+  Just model -> modelToForm model
   Nothing -> []
 
 

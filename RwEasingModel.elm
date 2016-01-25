@@ -8,11 +8,15 @@ import Color exposing (..)
 import Random exposing (..)
 
 
-type alias Model =
+type alias Elem =
   { x : Float
   , y : Float
   , anim : Maybe Anim 
   , seed : Seed }
+  
+  
+type alias Model =
+  { elems : List Elem }
   
   
 type alias Anim =
@@ -31,21 +35,39 @@ type alias Inp =
   { time : Time
   , panelSize : PanelSize }
 
+initialSeeds : Seed -> Int -> List Seed
+initialSeeds seed count =
+  if count == 0 then []
+  else 
+    let 
+      (i, nextSeed) = generate (Random.int minInt maxInt) seed
+      rest = initialSeeds nextSeed (count - 1)
+    in
+      nextSeed :: rest
+      
+initialElem : Seed -> Elem
+initialElem seed = 
+      { x = 0
+      , y = 0
+      , anim = Nothing 
+      , seed = seed }
+
 
 initial : Time -> Model
 initial time = 
-  { x = 0
-  , y = 0
-  , anim = Nothing 
-  , seed = initialSeed (round time) }
-
+  let
+    seed = initialSeed (round time)
+    seeds = initialSeeds seed 100
+    elems = List.map initialElem seeds
+  in
+    { elems = elems}
 
 animEaseValue : Time -> Time -> Float -> Float
 animEaseValue relTime duration to =
   let
     from = 0
   in
-    ease easeInOutCirc Easing.float from to duration relTime
+    ease easeInOutExpo Easing.float from to duration relTime
 
 
 animValue : Time -> Anim -> Float
@@ -57,44 +79,50 @@ animValue time anim=
     anim.startVal + diff
     
         
-updateAnimModel : Time -> Anim -> Model -> Model
-updateAnimModel time anim model = 
+updateAnimElem : Time -> Anim -> Elem -> Elem
+updateAnimElem time anim elem = 
   let
     animReady = (time - anim.startTime) > anim.duration
   in
     if (animReady) then
-      { model | x = animValue time anim 
+      { elem | x = animValue time anim 
         , anim = Nothing }
     else
-      { model | x = animValue time anim }
+      { elem | x = animValue time anim }
   
 
-updateNoAnimModel : Inp -> Model -> Model
-updateNoAnimModel inp model = 
+updateNoAnimElem : Inp -> Elem -> Elem
+updateNoAnimElem inp elem = 
   let 
     maxX = inp.panelSize.w / 2
     minX = -maxX
     gen = 
-      if (model.x > maxX) then Random.float -500 0
-      else if (model.x < minX) then Random.float 0 500
+      if (elem.x > maxX) then Random.float -500 0
+      else if (elem.x < minX) then Random.float 0 500
       else Random.float -500 500
-    (to, nextSeed) = generate gen model.seed
+    (to, nextSeed) = generate gen elem.seed
     newAnim = 
-      { startVal = model.x 
+      { startVal = elem.x 
       , startTime = inp.time
-      , duration = second * 3 
+      , duration = second * 5 
       , to = to}
   in
-    { model | seed = nextSeed
+    { elem | seed = nextSeed
       , anim = Just newAnim }
+
+updateElem : Inp -> Elem -> Elem
+updateElem inp elem = 
+  case elem.anim of
+    Just anim -> updateAnimElem inp.time anim elem
+    Nothing -> updateNoAnimElem inp elem
 
 
 updateModel : Inp -> Maybe Model -> Maybe Model
 updateModel inp maybeModel = 
   let
     model = withDefault (initial inp.time) maybeModel
-    nextModel = case model.anim of
-      Just anim -> updateAnimModel inp.time anim model
-      Nothing -> updateNoAnimModel inp model
+    nextElems = List.map (updateElem inp) model.elems
+    nextModel =
+      { model | elems = nextElems }
   in 
     Just nextModel
