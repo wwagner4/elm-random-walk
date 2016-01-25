@@ -18,7 +18,8 @@ type alias Model =
 type alias Anim =
   { startVal : Float
   , startTime : Time 
-  , duration : Time }
+  , duration : Time 
+  , to : Float }
   
   
 type alias PanelSize = 
@@ -33,17 +34,16 @@ type alias Inp =
 
 initial : Time -> Model
 initial time = 
-  { x = -400
+  { x = 0
   , y = 0
   , anim = Nothing 
   , seed = initialSeed (round time) }
 
 
-animEaseValue : Time -> Time -> Float
-animEaseValue relTime duration =
+animEaseValue : Time -> Time -> Float -> Float
+animEaseValue relTime duration to =
   let
     from = 0
-    to = 100
   in
     ease easeOutElastic Easing.float from to duration relTime
 
@@ -52,7 +52,7 @@ animValue : Time -> Anim -> Float
 animValue time anim= 
   let
     relTime = time - anim.startTime
-    diff = animEaseValue relTime anim.duration 
+    diff = animEaseValue relTime anim.duration anim.to 
   in 
     anim.startVal + diff
     
@@ -72,13 +72,15 @@ updateAnimModel time anim model =
 updateNoAnimModel : Time -> Model -> Model
 updateNoAnimModel time model = 
   let 
+    (to, nextSeed) = generate (Random.float -500 500) model.seed
     newAnim = 
       { startVal = model.x 
       , startTime = time
-      , duration = second * 1 }
+      , duration = second * 1 
+      , to = to}
   in
-    { model | 
-      anim = Just newAnim }
+    { model | seed = nextSeed
+      , anim = Just newAnim }
 
 
 updateModel : Inp -> Maybe Model -> Maybe Model
