@@ -67,7 +67,7 @@ animEaseValue relTime duration to =
   let
     from = 0
   in
-    ease easeInOutExpo Easing.float from to duration relTime
+    ease easeOutCubic Easing.float from to duration relTime
 
 
 animValue : Time -> Anim -> Float
