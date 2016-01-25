@@ -76,7 +76,7 @@ initial : Time -> Model
 initial time = 
   let
     seed = initialSeed (round time)
-    seeds = initialSeeds seed 100
+    seeds = initialSeeds seed 30
     elems = List.map initialElem seeds
   in
     { elems = elems}

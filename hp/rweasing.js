@@ -5577,6 +5577,156 @@ Elm.Time.make = function (_elm) {
                              ,delay: delay
                              ,since: since};
 };
+Elm.Easing = Elm.Easing || {};
+Elm.Easing.make = function (_elm) {
+   "use strict";
+   _elm.Easing = _elm.Easing || {};
+   if (_elm.Easing.values) return _elm.Easing.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var cycle = F3(function (animation,d,t) {    return A2(animation,1,t / d - $Basics.toFloat($Basics.floor(t / d)));});
+   var flip = F2(function (easing,time) {    return easing(1 - time);});
+   var retour = F2(function (easing,time) {    return _U.cmp(time,0.5) < 0 ? easing(time * 2) : A2(flip,easing,(time - 0.5) * 2);});
+   var invert = F2(function (easing,time) {    return 1 - easing(1 - time);});
+   var inOut = F3(function (e1,e2,time) {    return _U.cmp(time,0.5) < 0 ? e1(time * 2) / 2 : 0.5 + e2((time - 0.5) * 2) / 2;});
+   var easeInElastic = function (time) {
+      var t$ = time - 1;
+      var p = 0.3;
+      var s = 7.5e-2;
+      return 0 - Math.pow(2,10 * t$) * $Basics.sin((t$ - s) * (2 * $Basics.pi) / p);
+   };
+   var easeOutElastic = invert(easeInElastic);
+   var easeInOutElastic = A2(inOut,easeInElastic,easeOutElastic);
+   var easeOutBounce = function (time) {
+      var t4 = time - 2.65 / 2.75;
+      var t3 = time - 2.25 / 2.75;
+      var t2 = time - 1.5 / 2.75;
+      var a = 7.5625;
+      return _U.cmp(time,1 / 2.75) < 0 ? a * time * time : _U.cmp(time,2 / 2.75) < 0 ? a * t2 * t2 + 0.75 : _U.cmp(time,
+      2.5 / 2.75) < 0 ? a * t3 * t3 + 0.9375 : a * t4 * t4 + 0.984375;
+   };
+   var easeInBounce = invert(easeOutBounce);
+   var easeInOutBounce = A2(inOut,easeInBounce,easeOutBounce);
+   var easeInBack = function (time) {    return time * time * (2.70158 * time - 1.70158);};
+   var easeOutBack = invert(easeInBack);
+   var easeInOutBack = A2(inOut,easeInBack,easeOutBack);
+   var easeOutCirc = function (time) {    return $Basics.sqrt(1 - Math.pow(time - 1,2));};
+   var easeInCirc = invert(easeOutCirc);
+   var easeInOutCirc = A2(inOut,easeInCirc,easeOutCirc);
+   var easeInExpo = function (time) {    return Math.pow(2,10 * (time - 1));};
+   var easeOutExpo = invert(easeInExpo);
+   var easeInOutExpo = A2(inOut,easeInExpo,easeOutExpo);
+   var easeOutSine = function (time) {    return $Basics.sin(time * ($Basics.pi / 2));};
+   var easeInSine = invert(easeOutSine);
+   var easeInOutSine = A2(inOut,easeInSine,easeOutSine);
+   var easeInQuint = function (time) {    return Math.pow(time,5);};
+   var easeOutQuint = invert(easeInQuint);
+   var easeInOutQuint = A2(inOut,easeInQuint,easeOutQuint);
+   var easeInQuart = function (time) {    return Math.pow(time,4);};
+   var easeOutQuart = invert(easeInQuart);
+   var easeInOutQuart = A2(inOut,easeInQuart,easeOutQuart);
+   var easeInCubic = function (time) {    return Math.pow(time,3);};
+   var easeOutCubic = invert(easeInCubic);
+   var easeInOutCubic = A2(inOut,easeInCubic,easeOutCubic);
+   var easeInQuad = function (time) {    return Math.pow(time,2);};
+   var easeOutQuad = invert(easeInQuad);
+   var easeInOutQuad = A2(inOut,easeInQuad,easeOutQuad);
+   var linear = $Basics.identity;
+   var pair = F4(function (interpolate,_p1,_p0,v) {
+      var _p2 = _p1;
+      var _p3 = _p0;
+      return {ctor: "_Tuple2",_0: A3(interpolate,_p2._0,_p3._0,v),_1: A3(interpolate,_p2._1,_p3._1,v)};
+   });
+   var $float = F3(function (from,to,v) {    return from + (to - from) * v;});
+   var point2d = F3(function (from,to,v) {    return {x: A3($float,from.x,to.x,v),y: A3($float,from.y,to.y,v)};});
+   var point3d = F3(function (from,to,v) {    return {x: A3($float,from.x,to.x,v),y: A3($float,from.y,to.y,v),z: A3($float,from.z,to.z,v)};});
+   var color = F3(function (from,to,v) {
+      var float$ = F3(function (from,to,v) {    return $Basics.round(A3($float,$Basics.toFloat(from),$Basics.toFloat(to),v));});
+      var _p4 = {ctor: "_Tuple2",_0: $Color.toRgb(from),_1: $Color.toRgb(to)};
+      var rgb1 = _p4._0;
+      var rgb2 = _p4._1;
+      var _p5 = {ctor: "_Tuple4",_0: rgb1.red,_1: rgb1.green,_2: rgb1.blue,_3: rgb1.alpha};
+      var r1 = _p5._0;
+      var g1 = _p5._1;
+      var b1 = _p5._2;
+      var a1 = _p5._3;
+      var _p6 = {ctor: "_Tuple4",_0: rgb2.red,_1: rgb2.green,_2: rgb2.blue,_3: rgb2.alpha};
+      var r2 = _p6._0;
+      var g2 = _p6._1;
+      var b2 = _p6._2;
+      var a2 = _p6._3;
+      return A4($Color.rgba,A3(float$,r1,r2,v),A3(float$,g1,g2,v),A3(float$,b1,b2,v),A3($float,a1,a2,v));
+   });
+   var bezier = F5(function (x1,y1,x2,y2,time) {
+      var casteljau = function (ps) {
+         casteljau: while (true) {
+            var _p7 = ps;
+            if (_p7.ctor === "::" && _p7._0.ctor === "_Tuple2" && _p7._1.ctor === "[]") {
+                  return _p7._0._1;
+               } else {
+                  var _p8 = _p7;
+                  var _v3 = A3($List.map2,F2(function (x,y) {    return A4(pair,$float,x,y,time);}),_p8,A2($Maybe.withDefault,_U.list([]),$List.tail(_p8)));
+                  ps = _v3;
+                  continue casteljau;
+               }
+         }
+      };
+      return casteljau(_U.list([{ctor: "_Tuple2",_0: 0,_1: 0},{ctor: "_Tuple2",_0: x1,_1: y1},{ctor: "_Tuple2",_0: x2,_1: y2},{ctor: "_Tuple2",_0: 1,_1: 1}]));
+   });
+   var ease = F6(function (easing,interpolation,from,to,duration,time) {    return A3(interpolation,from,to,easing(A2($Basics.min,time / duration,1)));});
+   return _elm.Easing.values = {_op: _op
+                               ,ease: ease
+                               ,$float: $float
+                               ,point2d: point2d
+                               ,point3d: point3d
+                               ,color: color
+                               ,pair: pair
+                               ,cycle: cycle
+                               ,invert: invert
+                               ,retour: retour
+                               ,inOut: inOut
+                               ,flip: flip
+                               ,bezier: bezier
+                               ,linear: linear
+                               ,easeInQuad: easeInQuad
+                               ,easeOutQuad: easeOutQuad
+                               ,easeInOutQuad: easeInOutQuad
+                               ,easeInCubic: easeInCubic
+                               ,easeOutCubic: easeOutCubic
+                               ,easeInOutCubic: easeInOutCubic
+                               ,easeInQuart: easeInQuart
+                               ,easeOutQuart: easeOutQuart
+                               ,easeInOutQuart: easeInOutQuart
+                               ,easeInQuint: easeInQuint
+                               ,easeOutQuint: easeOutQuint
+                               ,easeInOutQuint: easeInOutQuint
+                               ,easeInSine: easeInSine
+                               ,easeOutSine: easeOutSine
+                               ,easeInOutSine: easeInOutSine
+                               ,easeInExpo: easeInExpo
+                               ,easeOutExpo: easeOutExpo
+                               ,easeInOutExpo: easeInOutExpo
+                               ,easeInCirc: easeInCirc
+                               ,easeOutCirc: easeOutCirc
+                               ,easeInOutCirc: easeInOutCirc
+                               ,easeInBack: easeInBack
+                               ,easeOutBack: easeOutBack
+                               ,easeInOutBack: easeInOutBack
+                               ,easeInBounce: easeInBounce
+                               ,easeOutBounce: easeOutBounce
+                               ,easeInOutBounce: easeInOutBounce
+                               ,easeInElastic: easeInElastic
+                               ,easeOutElastic: easeOutElastic
+                               ,easeInOutElastic: easeInOutElastic};
+};
 Elm.Native = Elm.Native || {};
 Elm.Native.Window = {};
 Elm.Native.Window.make = function make(localRuntime) {
@@ -5884,15 +6034,16 @@ Elm.Window.make = function (_elm) {
    var height = A2($Signal.map,$Basics.snd,dimensions);
    return _elm.Window.values = {_op: _op,dimensions: dimensions,width: width,height: height};
 };
-Elm.RwBasicModel = Elm.RwBasicModel || {};
-Elm.RwBasicModel.make = function (_elm) {
+Elm.RwEasingModel = Elm.RwEasingModel || {};
+Elm.RwEasingModel.make = function (_elm) {
    "use strict";
-   _elm.RwBasicModel = _elm.RwBasicModel || {};
-   if (_elm.RwBasicModel.values) return _elm.RwBasicModel.values;
+   _elm.RwEasingModel = _elm.RwEasingModel || {};
+   if (_elm.RwEasingModel.values) return _elm.RwEasingModel.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Color = Elm.Color.make(_elm),
    $Debug = Elm.Debug.make(_elm),
+   $Easing = Elm.Easing.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Random = Elm.Random.make(_elm),
@@ -5900,126 +6051,98 @@ Elm.RwBasicModel.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Time = Elm.Time.make(_elm);
    var _op = {};
-   var adjustVal = F2(function (span,val) {
-      var maxVal = span / 2.0;
-      var minVal = 0 - maxVal;
-      var r1 = A2($Basics.min,val,maxVal);
-      var r2 = A2($Basics.max,r1,minVal);
-      return r2;
-   });
-   var ranDiff = function (seed) {    var diffVal = 2.0;var gen = A2($Random.$float,0 - diffVal,diffVal);return A2($Random.generate,gen,seed);};
-   var updateVal = F2(function (seed,val) {
-      var _p0 = ranDiff(seed);
-      var diff = _p0._0;
+   var updateNoAnimElem = F2(function (inp,elem) {
+      var maxX = inp.panelSize.w / 2;
+      var minX = 0 - maxX;
+      var gen = _U.cmp(elem.x,maxX) > 0 ? A2($Random.$float,-500,0) : _U.cmp(elem.x,minX) < 0 ? A2($Random.$float,0,500) : A2($Random.$float,-500,500);
+      var _p0 = A2($Random.generate,gen,elem.seed);
+      var to = _p0._0;
       var nextSeed = _p0._1;
-      var nextVal = val + diff;
-      return {ctor: "_Tuple2",_0: nextVal,_1: nextSeed};
+      var newAnim = {startVal: elem.x,startTime: inp.time,duration: $Time.second * 5,to: to};
+      return _U.update(elem,{seed: nextSeed,anim: $Maybe.Just(newAnim)});
    });
-   var updatePos = F3(function (panel,seed,pos) {
-      var _p1 = A2(updateVal,seed,pos.x);
-      var nextX = _p1._0;
-      var s1 = _p1._1;
-      var _p2 = A2(updateVal,s1,pos.y);
-      var nextY = _p2._0;
-      var s2 = _p2._1;
-      var border = 50;
-      var adjX = A2(adjustVal,panel.w - border * 2,nextX);
-      var adjY = A2(adjustVal,panel.h - border * 2,nextY);
-      var nextPos = _U.update(pos,{x: adjX,y: adjY});
-      return {ctor: "_Tuple2",_0: nextPos,_1: s2};
+   var animEaseValue = F3(function (relTime,duration,to) {
+      var from = 0;
+      return A6($Easing.ease,$Easing.easeOutCubic,$Easing.$float,from,to,duration,relTime);
    });
-   var updateElem = F3(function (panel,seed,elem) {
-      var _p3 = A3(updatePos,panel,seed,elem.pos);
-      var nextPos = _p3._0;
-      var nextSeed = _p3._1;
-      var nextElem = _U.update(elem,{pos: nextPos});
-      return {ctor: "_Tuple2",_0: nextElem,_1: nextSeed};
+   var animValue = F2(function (time,anim) {
+      var relTime = time - anim.startTime;
+      var diff = A3(animEaseValue,relTime,anim.duration,anim.to);
+      return anim.startVal + diff;
    });
-   var updateFoldElem = F2(function (elem,_p4) {
-      var _p5 = _p4;
-      var _p7 = _p5._0;
-      var _p6 = A3(updateElem,_p7,_p5._1,elem);
-      var nextElem = _p6._0;
-      var nextSeed = _p6._1;
-      var nextElems = A2($List._op["::"],nextElem,_p5._2);
-      return {ctor: "_Tuple3",_0: _p7,_1: nextSeed,_2: nextElems};
+   var updateAnimElem = F3(function (time,anim,elem) {
+      var animReady = _U.cmp(time - anim.startTime,anim.duration) > 0;
+      return animReady ? _U.update(elem,{x: A2(animValue,time,anim),anim: $Maybe.Nothing}) : _U.update(elem,{x: A2(animValue,time,anim)});
    });
-   var ranColor = function (seed) {
-      var gen = A2($Random.$float,0,360);
-      var _p8 = A2($Random.generate,gen,seed);
-      var ranDeg = _p8._0;
-      var nextSeed = _p8._1;
-      var col = A3($Color.hsl,$Basics.degrees(ranDeg),1,0.5);
-      return {ctor: "_Tuple2",_0: col,_1: nextSeed};
-   };
-   var initialPos = {x: 0.0,y: 0.0};
-   var initialElem = function (seed) {
-      var _p9 = ranColor(seed);
-      var col = _p9._0;
-      var nextSeed = _p9._1;
-      var elem = {pos: initialPos,color: col};
-      return {ctor: "_Tuple2",_0: elem,_1: nextSeed};
-   };
-   var initialElems = F2(function (cnt,seed) {
-      if (_U.eq(cnt,0)) return {ctor: "_Tuple2",_0: _U.list([]),_1: seed}; else {
-            var _p10 = initialElem(seed);
-            var elem = _p10._0;
-            var s1 = _p10._1;
-            var _p11 = A2(initialElems,cnt - 1,s1);
-            var restElems = _p11._0;
-            var s2 = _p11._1;
-            var elems = A2($List._op["::"],elem,restElems);
-            return {ctor: "_Tuple2",_0: elems,_1: s2};
+   var updateElem = F2(function (inp,elem) {
+      var _p1 = elem.anim;
+      if (_p1.ctor === "Just") {
+            return A3(updateAnimElem,inp.time,_p1._0,elem);
+         } else {
+            return A2(updateNoAnimElem,inp,elem);
          }
    });
-   var initial = function (startTime) {
-      var s1 = $Random.initialSeed($Basics.round(startTime));
-      var _p12 = A2(initialElems,40,s1);
-      var elems = _p12._0;
-      var s2 = _p12._1;
-      var model = {elems: elems};
-      return {ctor: "_Tuple2",_0: model,_1: s2};
+   var ranColor = function (seed) {
+      var _p2 = A2($Random.generate,A2($Random.$int,1,3),seed);
+      var i = _p2._0;
+      var nextSeed = _p2._1;
+      var color = _U.eq(i,1) ? $Color.red : _U.eq(i,2) ? $Color.green : $Color.blue;
+      return {ctor: "_Tuple2",_0: color,_1: nextSeed};
    };
-   var update = F2(function (inp,maybeModel) {
-      var _p13 = A2($Maybe.withDefault,initial(inp.time),maybeModel);
-      var model = _p13._0;
-      var seed = _p13._1;
-      var _p14 = A3($List.foldl,updateFoldElem,{ctor: "_Tuple3",_0: inp.panelDim,_1: seed,_2: _U.list([])},model.elems);
-      var panelDim = _p14._0;
-      var nextSeed = _p14._1;
-      var nextElems = _p14._2;
-      var nextModel = _U.update(model,{elems: nextElems});
-      return $Maybe.Just({ctor: "_Tuple2",_0: nextModel,_1: nextSeed});
+   var initialElem = function (seed) {
+      var _p3 = ranColor(seed);
+      var color = _p3._0;
+      var nextSeed = _p3._1;
+      return {x: 0,y: 0,color: color,anim: $Maybe.Nothing,seed: nextSeed};
+   };
+   var initialSeeds = F2(function (seed,count) {
+      if (_U.eq(count,0)) return _U.list([]); else {
+            var _p4 = A2($Random.generate,A2($Random.$int,$Random.minInt,$Random.maxInt),seed);
+            var i = _p4._0;
+            var nextSeed = _p4._1;
+            var rest = A2(initialSeeds,nextSeed,count - 1);
+            return A2($List._op["::"],nextSeed,rest);
+         }
    });
-   var Inp = F2(function (a,b) {    return {time: a,panelDim: b};});
+   var initial = function (time) {
+      var seed = $Random.initialSeed($Basics.round(time));
+      var seeds = A2(initialSeeds,seed,30);
+      var elems = A2($List.map,initialElem,seeds);
+      return {elems: elems};
+   };
+   var updateModel = F2(function (inp,maybeModel) {
+      var model = A2($Maybe.withDefault,initial(inp.time),maybeModel);
+      var nextElems = A2($List.map,updateElem(inp),model.elems);
+      var nextModel = _U.update(model,{elems: nextElems});
+      return $Maybe.Just(nextModel);
+   });
+   var Inp = F2(function (a,b) {    return {time: a,panelSize: b};});
+   var PanelSize = F2(function (a,b) {    return {w: a,h: b};});
+   var Anim = F4(function (a,b,c,d) {    return {startVal: a,startTime: b,duration: c,to: d};});
    var Model = function (a) {    return {elems: a};};
-   var Elem = F2(function (a,b) {    return {pos: a,color: b};});
-   var Pos = F2(function (a,b) {    return {x: a,y: b};});
-   var PanelDim = F2(function (a,b) {    return {w: a,h: b};});
-   return _elm.RwBasicModel.values = {_op: _op
-                                     ,PanelDim: PanelDim
-                                     ,Pos: Pos
-                                     ,Elem: Elem
-                                     ,Model: Model
-                                     ,Inp: Inp
-                                     ,initialPos: initialPos
-                                     ,ranColor: ranColor
-                                     ,initialElem: initialElem
-                                     ,initialElems: initialElems
-                                     ,initial: initial
-                                     ,ranDiff: ranDiff
-                                     ,updateVal: updateVal
-                                     ,adjustVal: adjustVal
-                                     ,updatePos: updatePos
-                                     ,updateElem: updateElem
-                                     ,updateFoldElem: updateFoldElem
-                                     ,update: update};
+   var Elem = F5(function (a,b,c,d,e) {    return {x: a,y: b,color: c,anim: d,seed: e};});
+   return _elm.RwEasingModel.values = {_op: _op
+                                      ,Elem: Elem
+                                      ,Model: Model
+                                      ,Anim: Anim
+                                      ,PanelSize: PanelSize
+                                      ,Inp: Inp
+                                      ,initialSeeds: initialSeeds
+                                      ,ranColor: ranColor
+                                      ,initialElem: initialElem
+                                      ,initial: initial
+                                      ,animEaseValue: animEaseValue
+                                      ,animValue: animValue
+                                      ,updateAnimElem: updateAnimElem
+                                      ,updateNoAnimElem: updateNoAnimElem
+                                      ,updateElem: updateElem
+                                      ,updateModel: updateModel};
 };
-Elm.RwBasicView = Elm.RwBasicView || {};
-Elm.RwBasicView.make = function (_elm) {
+Elm.RwEasingView = Elm.RwEasingView || {};
+Elm.RwEasingView.make = function (_elm) {
    "use strict";
-   _elm.RwBasicView = _elm.RwBasicView || {};
-   if (_elm.RwBasicView.values) return _elm.RwBasicView.values;
+   _elm.RwEasingView = _elm.RwEasingView || {};
+   if (_elm.RwEasingView.values) return _elm.RwEasingView.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
@@ -6028,31 +6151,24 @@ Elm.RwBasicView.make = function (_elm) {
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
-   $RwBasicModel = Elm.RwBasicModel.make(_elm),
+   $RwEasingModel = Elm.RwEasingModel.make(_elm),
    $Signal = Elm.Signal.make(_elm);
    var _op = {};
-   var form = F2(function (shape,elem) {    return A2($Graphics$Collage.alpha,0.4,A2($Graphics$Collage.filled,elem.color,shape));});
-   var shape = $Graphics$Collage.circle(50.0);
-   var toForm = function (elem) {
-      var y = elem.pos.y;
-      var x = elem.pos.x;
-      return A2($Graphics$Collage.move,{ctor: "_Tuple2",_0: x,_1: y},A2(form,shape,elem));
+   var elemToForm = function (elem) {
+      return A2($Graphics$Collage.move,
+      {ctor: "_Tuple2",_0: elem.x,_1: elem.y},
+      A2($Graphics$Collage.alpha,0.5,A2($Graphics$Collage.filled,elem.color,A2($Graphics$Collage.rect,100,200))));
    };
-   var toForms = function (model) {    return A2($List.map,toForm,model.elems);};
-   var view = F2(function (panel,maybeModel) {
-      var maybeForms = A2($Maybe.map,toForms,maybeModel);
-      var forms = A2($Maybe.withDefault,_U.list([]),maybeForms);
-      var h = $Basics.round(panel.h);
-      var w = $Basics.round(panel.w);
-      return A3($Graphics$Collage.collage,w,h,forms);
-   });
-   return _elm.RwBasicView.values = {_op: _op,shape: shape,form: form,toForm: toForm,toForms: toForms,view: view};
+   var modelToForm = function (model) {    return A2($List.map,elemToForm,model.elems);};
+   var toForms = function (maybeModel) {    var _p0 = maybeModel;if (_p0.ctor === "Just") {    return modelToForm(_p0._0);} else {    return _U.list([]);}};
+   var viewModel = F2(function (_p1,maybeModel) {    var _p2 = _p1;return A3($Graphics$Collage.collage,_p2._0,_p2._1,toForms(maybeModel));});
+   return _elm.RwEasingView.values = {_op: _op,elemToForm: elemToForm,modelToForm: modelToForm,toForms: toForms,viewModel: viewModel};
 };
-Elm.RwBasicReactive = Elm.RwBasicReactive || {};
-Elm.RwBasicReactive.make = function (_elm) {
+Elm.RwEasingMain = Elm.RwEasingMain || {};
+Elm.RwEasingMain.make = function (_elm) {
    "use strict";
-   _elm.RwBasicReactive = _elm.RwBasicReactive || {};
-   if (_elm.RwBasicReactive.values) return _elm.RwBasicReactive.values;
+   _elm.RwEasingMain = _elm.RwEasingMain || {};
+   if (_elm.RwEasingMain.values) return _elm.RwEasingMain.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
@@ -6060,32 +6176,25 @@ Elm.RwBasicReactive.make = function (_elm) {
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
-   $RwBasicModel = Elm.RwBasicModel.make(_elm),
-   $RwBasicView = Elm.RwBasicView.make(_elm),
+   $RwEasingModel = Elm.RwEasingModel.make(_elm),
+   $RwEasingView = Elm.RwEasingView.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
    var _op = {};
-   var leftMaybeSig = function (sig) {
-      var left = function (_p0) {    var _p1 = _p0;return _p1._0;};
-      var leftMaybe = function (tuple) {    return A2($Maybe.map,left,tuple);};
-      return A2($Signal.map,leftMaybe,sig);
-   };
-   var inp = F2(function (time,panelDim) {    return {time: time,panelDim: panelDim};});
-   var toPanelDim = function (_p2) {    var _p3 = _p2;return {w: $Basics.toFloat(_p3._0),h: $Basics.toFloat(_p3._1)};};
-   var panelDimSig = A2($Signal.map,toPanelDim,$Window.dimensions);
-   var timeSig = $Time.every($Time.millisecond / 10);
-   var inpSig = A3($Signal.map2,inp,timeSig,panelDimSig);
-   var main = function () {
-      var modelSig = A3($Signal.foldp,$RwBasicModel.update,$Maybe.Nothing,inpSig);
-      return A3($Signal.map2,$RwBasicView.view,panelDimSig,leftMaybeSig(modelSig));
-   }();
-   return _elm.RwBasicReactive.values = {_op: _op
-                                        ,timeSig: timeSig
-                                        ,toPanelDim: toPanelDim
-                                        ,panelDimSig: panelDimSig
-                                        ,inp: inp
-                                        ,inpSig: inpSig
-                                        ,leftMaybeSig: leftMaybeSig
-                                        ,main: main};
+   var toInp = F2(function (time,panelSize) {    return {time: time,panelSize: panelSize};});
+   var toPanelSize = function (_p0) {    var _p1 = _p0;return {w: $Basics.toFloat(_p1._0),h: $Basics.toFloat(_p1._1)};};
+   var panelSizeSig = A2($Signal.map,toPanelSize,$Window.dimensions);
+   var timeSig = $Time.every($Time.millisecond * 10);
+   var inpSig = A3($Signal.map2,toInp,timeSig,panelSizeSig);
+   var modelSig = A3($Signal.foldp,$RwEasingModel.updateModel,$Maybe.Nothing,inpSig);
+   var main = A3($Signal.map2,$RwEasingView.viewModel,$Window.dimensions,modelSig);
+   return _elm.RwEasingMain.values = {_op: _op
+                                     ,timeSig: timeSig
+                                     ,toPanelSize: toPanelSize
+                                     ,panelSizeSig: panelSizeSig
+                                     ,toInp: toInp
+                                     ,inpSig: inpSig
+                                     ,modelSig: modelSig
+                                     ,main: main};
 };

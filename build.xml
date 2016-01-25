@@ -5,6 +5,11 @@
       <arg value="--output"/>
       <arg value="hp/rwbasic.js"/>
     </exec>
+    <exec executable="elm-make">
+      <arg value="RwEasingMain.elm"/>
+      <arg value="--output"/>
+      <arg value="hp/rweasing.js"/>
+    </exec>
     <copy todir="/Users/wwagner4/prj/entelijan-homepage/elm-random-walk">
       <fileset dir="hp">
         <include name="*"></include>

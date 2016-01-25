@@ -1,3 +1,5 @@
+module RwEasingMain where
+
 import RwEasingModel exposing (..)
 import RwEasingView exposing (..)
 

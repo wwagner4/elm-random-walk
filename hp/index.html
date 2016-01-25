@@ -7,12 +7,14 @@
   <style>
   body {font-family: 'Special Elite', cursive; font-size:1em;margin-left: auto; margin-right: auto;
     background-image: url("bg1.png"); max-width:700px;}
-  header, nav, section, article, footer
+header, nav, section, article, footer
   {border:0px solid grey; margin:0px; padding:5px;}
-  #rw {height: 300px; background-color: rgba(255, 255, 255, 0.4); border:1px solid rgba(120, 120, 120, 0.1); }
-  #cont {background-color: rgba(255, 255, 255, 0.7); }
+#rwbasic {height: 300px; background-color: rgba(255, 255, 255, 0.4); border:1px solid rgba(120, 120, 120, 0.1); }
+#rweasing {height: 300px; background-color: rgba(255, 255, 255, 0.4); border:1px solid rgba(120, 120, 120, 0.1); }
+#cont {background-color: rgba(255, 255, 255, 0.7); }
   </style>
   <script src="rwbasic.js"></script>
+  <script src="rweasing.js"></script>
 </head>
 <body>
   <div id="cont">
@@ -34,9 +36,17 @@
     Handling of random values.
     Random initialisation by time.</p>
   <p><a href="https://github.com/wwagner4/elm-random-walk">Source code</a></p>
+  <div id="rwbasic"></div>
+  </article>
 
-  <div id="rw"></div>
-
+  <article>
+  <h2>Easing</h2>
+  <p>Adresses the following problems:
+    Using the elm Easing module.
+    Alternate usage of random values in lists.
+  </p>
+  <p><a href="https://github.com/wwagner4/elm-random-walk">Source code</a></p>
+  <div id="rweasing"></div>
   </article>
 
   </section>
@@ -46,8 +56,10 @@
   </footer>
 
   <script type="text/javascript">
-      var rwDiv = document.getElementById('rw');
-      Elm.embed(Elm.RwBasicReactive, rwDiv);
+      var rwbasicDiv = document.getElementById('rwbasic');
+      Elm.embed(Elm.RwBasicReactive, rwbasicDiv);
+      var rweasingDiv = document.getElementById('rweasing');
+      Elm.embed(Elm.RwEasingMain, rweasingDiv);
   </script>
 
 
