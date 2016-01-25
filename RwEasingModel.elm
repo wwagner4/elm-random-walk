@@ -60,9 +60,9 @@ animValue time anim=
 updateAnimModel : Time -> Anim -> Model -> Model
 updateAnimModel time anim model = 
   let
-    ready = (time - anim.startTime) > anim.duration
+    animReady = (time - anim.startTime) > anim.duration
   in
-    if (ready) then
+    if (animReady) then
       { model | x = animValue time anim 
         , anim = Nothing }
     else
