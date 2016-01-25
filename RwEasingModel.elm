@@ -11,6 +11,7 @@ import Random exposing (..)
 type alias Elem =
   { x : Float
   , y : Float
+  , color : Color
   , anim : Maybe Anim 
   , seed : Seed }
   
@@ -35,6 +36,7 @@ type alias Inp =
   { time : Time
   , panelSize : PanelSize }
 
+
 initialSeeds : Seed -> Int -> List Seed
 initialSeeds seed count =
   if count == 0 then []
@@ -45,12 +47,29 @@ initialSeeds seed count =
     in
       nextSeed :: rest
       
+      
+ranColor : Seed -> (Color, Seed)
+ranColor seed = 
+  let 
+    (i, nextSeed) = generate (Random.int 1 3) seed
+    color = 
+      if (i == 1) then Color.red
+      else if (i == 2) then Color.green
+      else Color.blue
+  in
+    (color, nextSeed)
+
+      
 initialElem : Seed -> Elem
 initialElem seed = 
-      { x = 0
-      , y = 0
-      , anim = Nothing 
-      , seed = seed }
+  let
+    (color, nextSeed) = ranColor seed
+  in
+    { x = 0
+    , y = 0
+    , color = color
+    , anim = Nothing 
+    , seed = nextSeed }
 
 
 initial : Time -> Model

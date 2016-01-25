@@ -10,9 +10,9 @@ import RwEasingModel exposing (..)
 
 elemToForm : Elem -> Form
 elemToForm elem =
-  rect 50 800
-    |> filled Color.green
-    |> alpha 0.2
+  rect 100 150
+    |> filled elem.color
+    |> alpha 0.3
     |> move (elem.x, elem.y)
   
   
