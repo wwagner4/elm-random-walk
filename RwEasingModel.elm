@@ -45,7 +45,7 @@ animEaseValue relTime duration to =
   let
     from = 0
   in
-    ease easeOutElastic Easing.float from to duration relTime
+    ease easeInOutCirc Easing.float from to duration relTime
 
 
 animValue : Time -> Anim -> Float
@@ -82,7 +82,7 @@ updateNoAnimModel inp model =
     newAnim = 
       { startVal = model.x 
       , startTime = inp.time
-      , duration = second * 1 
+      , duration = second * 3 
       , to = to}
   in
     { model | seed = nextSeed
