@@ -69,13 +69,19 @@ updateAnimModel time anim model =
       { model | x = animValue time anim }
   
 
-updateNoAnimModel : Time -> Model -> Model
-updateNoAnimModel time model = 
+updateNoAnimModel : Inp -> Model -> Model
+updateNoAnimModel inp model = 
   let 
-    (to, nextSeed) = generate (Random.float -500 500) model.seed
+    maxX = inp.panelSize.w / 2
+    minX = -maxX
+    gen = 
+      if (model.x > maxX) then Random.float -500 0
+      else if (model.x < minX) then Random.float 0 500
+      else Random.float -500 500
+    (to, nextSeed) = generate gen model.seed
     newAnim = 
       { startVal = model.x 
-      , startTime = time
+      , startTime = inp.time
       , duration = second * 1 
       , to = to}
   in
@@ -89,6 +95,6 @@ updateModel inp maybeModel =
     model = withDefault (initial inp.time) maybeModel
     nextModel = case model.anim of
       Just anim -> updateAnimModel inp.time anim model
-      Nothing -> updateNoAnimModel inp.time model
+      Nothing -> updateNoAnimModel inp model
   in 
     Just nextModel
