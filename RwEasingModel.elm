@@ -8,18 +8,27 @@ import Color exposing (..)
 import Random exposing (..)
 
 
-
 type alias Model =
   { x : Float
   , y : Float
   , anim : Maybe Anim 
-  , seed : Seed}
+  , seed : Seed }
   
   
 type alias Anim =
   { startVal : Float
   , startTime : Time 
   , duration : Time }
+  
+  
+type alias PanelSize = 
+  { w : Float
+  , h : Float }
+
+
+type alias Inp = 
+  { time : Time
+  , panelSize : PanelSize }
 
 
 initial : Time -> Model
@@ -34,7 +43,7 @@ animEaseValue : Time -> Time -> Float
 animEaseValue relTime duration =
   let
     from = 0
-    to = 300
+    to = 100
   in
     ease easeOutElastic Easing.float from to duration relTime
 
@@ -60,7 +69,7 @@ updateNoAnimModel time model =
     newAnim = 
       { startVal = model.x 
       , startTime = time
-      , duration = second * 1 }
+      , duration = second * 10 }
   in
     { model | 
       anim = Just newAnim }
