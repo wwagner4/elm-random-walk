@@ -57,10 +57,21 @@ animValue time anim=
     anim.startVal + diff
     
     
+animReady : Time -> Anim -> Bool
+animReady time anim = 
+  (time - anim.startTime) > anim.duration
+
+    
 updateAnimModel : Time -> Anim -> Model -> Model
 updateAnimModel time anim model = 
-  { model | 
-    x = animValue time anim }
+  let
+    ready = animReady time anim
+  in
+    if (ready) then
+      { model | x = animValue time anim 
+        , anim = Nothing }
+    else
+      { model | x = animValue time anim }
   
 
 updateNoAnimModel : Time -> Model -> Model
