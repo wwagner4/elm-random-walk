@@ -33,7 +33,7 @@ type alias Inp =
 
 initial : Time -> Model
 initial time = 
-  { x = 0
+  { x = -400
   , y = 0
   , anim = Nothing 
   , seed = initialSeed (round time) }
@@ -75,7 +75,7 @@ updateNoAnimModel time model =
     newAnim = 
       { startVal = model.x 
       , startTime = time
-      , duration = second * 10 }
+      , duration = second * 1 }
   in
     { model | 
       anim = Just newAnim }
