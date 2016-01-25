@@ -11,7 +11,7 @@ import Maybe exposing (..)
 
 
 timeSig : Signal Time
-timeSig = Time.every (Time.millisecond / 10)
+timeSig = Time.every (Time.second * 0.05)
 
 
 toPanelDim : (Int, Int) -> PanelDim

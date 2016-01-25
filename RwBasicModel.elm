@@ -69,7 +69,7 @@ initial : Time -> (Model, Seed)
 initial startTime =
   let
     s1 = initialSeed (round startTime)
-    (elems, s2) = initialElems 40 s1
+    (elems, s2) = initialElems 5 s1
     model =
       { elems = elems }
     in
@@ -79,12 +79,22 @@ initial startTime =
 ranDiff : Seed -> (Float, Seed)
 ranDiff seed =
   let
-    diffVal = 2.0
+    diffVal = 5.0
     gen = Random.float -diffVal diffVal
+    (diff, nextSeed) = generate gen seed
   in
-    generate gen seed
-
-
+    (diff * 10, nextSeed)
+    
+    
+ranBool : Seed -> (Bool, Seed)
+ranBool seed =
+  let 
+    (int, nextSeed) = generate (Random.int 1 1000) seed
+    bool = int < 200
+  in
+    (bool, nextSeed)
+    
+    
 updateVal : Seed -> Float -> (Float, Seed)
 updateVal seed val =
   let
@@ -121,10 +131,13 @@ updatePos panel seed pos =
 updateElem : PanelDim -> Seed -> Elem -> (Elem, Seed)
 updateElem panel seed elem =
   let
-    (nextPos, nextSeed) = updatePos panel seed elem.pos
-    nextElem = { elem | pos = nextPos }
+    (bool, s1) = ranBool seed
+    (nextPos, s2) = updatePos panel s1 elem.pos
+    nextElem = 
+      if bool then { elem | pos = nextPos } 
+      else elem
   in
-    (nextElem, nextSeed)
+    (nextElem, s2)
 
 
 updateFoldElem : Elem -> (PanelDim, Seed, List Elem) -> (PanelDim, Seed, List Elem)
