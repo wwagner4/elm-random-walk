@@ -28,6 +28,12 @@ type alias Inp =
   , panelDim : PanelDim }
 
 
+inp : Time -> PanelDim -> Inp
+inp time panelDim =
+  { time = time
+  , panelDim = panelDim }
+
+
 initialPos : Pos
 initialPos = { x = 0.0, y = 0.0 }
 
@@ -79,7 +85,7 @@ initial startTime =
 ranDiff : Seed -> (Float, Seed)
 ranDiff seed =
   let
-    diffVal = 5.0
+    diffVal = 2.0
     gen = Random.float -diffVal diffVal
     (diff, nextSeed) = generate gen seed
   in
@@ -90,7 +96,7 @@ ranBool : Seed -> (Bool, Seed)
 ranBool seed =
   let
     (int, nextSeed) = generate (Random.int 1 1000) seed
-    bool = int < 200
+    bool = int < 10
   in
     (bool, nextSeed)
 
@@ -156,12 +162,12 @@ update inp maybeModel =
     (model, seed) = withDefault (initial inp.time) maybeModel
 
     (panelDim, nextSeed, nextElems) =
-      List.foldl
+      List.foldr
         updateFoldElem
         (inp.panelDim, seed, [])
         model.elems
 
-    nextModel = { model | elems = List.reverse nextElems }
+    nextModel = { model | elems = nextElems }
 
   in
     Just (nextModel, nextSeed)

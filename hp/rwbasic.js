@@ -5911,11 +5911,11 @@ Elm.RwBasicModel.make = function (_elm) {
       var _p0 = A2($Random.generate,A2($Random.$int,1,1000),seed);
       var $int = _p0._0;
       var nextSeed = _p0._1;
-      var bool = _U.cmp($int,200) < 0;
+      var bool = _U.cmp($int,10) < 0;
       return {ctor: "_Tuple2",_0: bool,_1: nextSeed};
    };
    var ranDiff = function (seed) {
-      var diffVal = 5.0;
+      var diffVal = 2.0;
       var gen = A2($Random.$float,0 - diffVal,diffVal);
       var _p1 = A2($Random.generate,gen,seed);
       var diff = _p1._0;
@@ -6001,13 +6001,14 @@ Elm.RwBasicModel.make = function (_elm) {
       var _p16 = A2($Maybe.withDefault,initial(inp.time),maybeModel);
       var model = _p16._0;
       var seed = _p16._1;
-      var _p17 = A3($List.foldl,updateFoldElem,{ctor: "_Tuple3",_0: inp.panelDim,_1: seed,_2: _U.list([])},model.elems);
+      var _p17 = A3($List.foldr,updateFoldElem,{ctor: "_Tuple3",_0: inp.panelDim,_1: seed,_2: _U.list([])},model.elems);
       var panelDim = _p17._0;
       var nextSeed = _p17._1;
       var nextElems = _p17._2;
-      var nextModel = _U.update(model,{elems: $List.reverse(nextElems)});
+      var nextModel = _U.update(model,{elems: nextElems});
       return $Maybe.Just({ctor: "_Tuple2",_0: nextModel,_1: nextSeed});
    });
+   var inp = F2(function (time,panelDim) {    return {time: time,panelDim: panelDim};});
    var Inp = F2(function (a,b) {    return {time: a,panelDim: b};});
    var Model = function (a) {    return {elems: a};};
    var Elem = F2(function (a,b) {    return {pos: a,color: b};});
@@ -6019,6 +6020,7 @@ Elm.RwBasicModel.make = function (_elm) {
                                      ,Elem: Elem
                                      ,Model: Model
                                      ,Inp: Inp
+                                     ,inp: inp
                                      ,initialPos: initialPos
                                      ,ranColor: ranColor
                                      ,initialElem: initialElem
@@ -6049,12 +6051,10 @@ Elm.RwBasicView.make = function (_elm) {
    $RwBasicModel = Elm.RwBasicModel.make(_elm),
    $Signal = Elm.Signal.make(_elm);
    var _op = {};
-   var form = F2(function (shape,elem) {    return A2($Graphics$Collage.alpha,0.3,A2($Graphics$Collage.filled,elem.color,shape));});
-   var shape = $Graphics$Collage.square(80.0);
    var toForm = function (elem) {
-      var y = elem.pos.y;
-      var x = elem.pos.x;
-      return A2($Graphics$Collage.move,{ctor: "_Tuple2",_0: x,_1: y},A2(form,shape,elem));
+      return A2($Graphics$Collage.move,
+      {ctor: "_Tuple2",_0: elem.pos.x,_1: elem.pos.y},
+      A2($Graphics$Collage.alpha,0.3,A2($Graphics$Collage.filled,elem.color,$Graphics$Collage.square(80.0))));
    };
    var toForms = function (model) {    return A2($List.map,toForm,model.elems);};
    var view = F2(function (panel,maybeModel) {
@@ -6064,7 +6064,7 @@ Elm.RwBasicView.make = function (_elm) {
       var w = $Basics.round(panel.w);
       return A3($Graphics$Collage.collage,w,h,forms);
    });
-   return _elm.RwBasicView.values = {_op: _op,shape: shape,form: form,toForm: toForm,toForms: toForms,view: view};
+   return _elm.RwBasicView.values = {_op: _op,toForm: toForm,toForms: toForms,view: view};
 };
 Elm.RwBasicReactive = Elm.RwBasicReactive || {};
 Elm.RwBasicReactive.make = function (_elm) {
@@ -6077,6 +6077,7 @@ Elm.RwBasicReactive.make = function (_elm) {
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $Random = Elm.Random.make(_elm),
    $Result = Elm.Result.make(_elm),
    $RwBasicModel = Elm.RwBasicModel.make(_elm),
    $RwBasicView = Elm.RwBasicView.make(_elm),
@@ -6084,26 +6085,20 @@ Elm.RwBasicReactive.make = function (_elm) {
    $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
    var _op = {};
-   var leftMaybeSig = function (sig) {
-      var left = function (_p0) {    var _p1 = _p0;return _p1._0;};
-      var leftMaybe = function (tuple) {    return A2($Maybe.map,left,tuple);};
-      return A2($Signal.map,leftMaybe,sig);
-   };
-   var inp = F2(function (time,panelDim) {    return {time: time,panelDim: panelDim};});
-   var toPanelDim = function (_p2) {    var _p3 = _p2;return {w: $Basics.toFloat(_p3._0),h: $Basics.toFloat(_p3._1)};};
-   var panelDimSig = A2($Signal.map,toPanelDim,$Window.dimensions);
-   var timeSig = $Time.every($Time.second * 5.0e-2);
-   var inpSig = A3($Signal.map2,inp,timeSig,panelDimSig);
-   var main = function () {
-      var modelSig = A3($Signal.foldp,$RwBasicModel.update,$Maybe.Nothing,inpSig);
-      return A3($Signal.map2,$RwBasicView.view,panelDimSig,leftMaybeSig(modelSig));
+   var leftMaybeSig = function (sig) {    return A2($Signal.map,$Maybe.map(function (_p0) {    var _p1 = _p0;return _p1._0;}),sig);};
+   var panelDimSig = function () {
+      var toPanelDim = function (_p2) {    var _p3 = _p2;return {w: $Basics.toFloat(_p3._0),h: $Basics.toFloat(_p3._1)};};
+      return A2($Signal.map,toPanelDim,$Window.dimensions);
    }();
+   var timeSig = $Time.every($Time.second * 1.0e-3);
+   var inpSig = A3($Signal.map2,$RwBasicModel.inp,timeSig,panelDimSig);
+   var modelSig = A3($Signal.foldp,$RwBasicModel.update,$Maybe.Nothing,inpSig);
+   var main = A3($Signal.map2,$RwBasicView.view,panelDimSig,leftMaybeSig(modelSig));
    return _elm.RwBasicReactive.values = {_op: _op
                                         ,timeSig: timeSig
-                                        ,toPanelDim: toPanelDim
                                         ,panelDimSig: panelDimSig
-                                        ,inp: inp
                                         ,inpSig: inpSig
                                         ,leftMaybeSig: leftMaybeSig
+                                        ,modelSig: modelSig
                                         ,main: main};
 };

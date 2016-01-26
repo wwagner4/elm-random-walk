@@ -3,32 +3,27 @@ module RwBasicReactive where
 import RwBasicModel exposing (..)
 import RwBasicView exposing (..)
 
+import Graphics.Element exposing (..)
 import Signal exposing (..)
 import Window exposing (..)
 import Time exposing (..)
-import Graphics.Element exposing (..)
 import Maybe exposing (..)
+import Random exposing (..)
 
 
 timeSig : Signal Time
-timeSig = Time.every (Time.second * 0.05)
-
-
-toPanelDim : (Int, Int) -> PanelDim
-toPanelDim (x, y) = {
-  w = toFloat x
-  , h = toFloat y }
+timeSig =
+  Time.every (Time.second * 0.001)
 
 
 panelDimSig : Signal PanelDim
 panelDimSig =
-  Signal.map toPanelDim Window.dimensions
-
-
-inp : Time -> PanelDim -> Inp
-inp time panelDim =
-  { time = time
-  , panelDim = panelDim }
+  let
+    toPanelDim (x, y) = {
+      w = toFloat x
+      , h = toFloat y }
+  in
+    Signal.map toPanelDim Window.dimensions
 
 
 inpSig : Signal Inp
@@ -38,16 +33,14 @@ inpSig =
 
 leftMaybeSig : Signal (Maybe (left, right)) -> Signal (Maybe left)
 leftMaybeSig sig =
-  let
-    left (l, r) = l
-    leftMaybe tuple = Maybe.map left tuple
-  in
-    Signal.map leftMaybe sig
+  Signal.map (Maybe.map (\(l, r) -> l)) sig
+
+
+modelSig : Signal (Maybe (Model, Seed))
+modelSig =
+  Signal.foldp update Nothing inpSig
 
 
 main : Signal Element
 main =
-  let
-    modelSig = Signal.foldp update Nothing inpSig
-  in
-    Signal.map2 view panelDimSig (leftMaybeSig modelSig)
+  Signal.map2 view panelDimSig (leftMaybeSig modelSig)
