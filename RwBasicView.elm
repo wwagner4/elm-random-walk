@@ -8,24 +8,12 @@ import Color exposing (..)
 import Maybe exposing (..)
 
 
-shape : Shape
-shape = square 80.0
-
-
-form : Shape -> Elem -> Form
-form shape elem = shape
-  |> filled elem.color
-  |> alpha 0.3
-
-
 toForm : Elem -> Form
 toForm elem =
-  let
-    x = elem.pos.x
-    y = elem.pos.y
-  in
-    form shape elem
-      |> move (x, y)
+  square 80.0
+    |> filled elem.color
+    |> alpha 0.3
+    |> move (elem.pos.x, elem.pos.y)
 
 
 toForms : Model -> List Form
