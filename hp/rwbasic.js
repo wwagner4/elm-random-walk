@@ -5991,7 +5991,7 @@ Elm.RwBasicModel.make = function (_elm) {
    });
    var initial = function (startTime) {
       var s1 = $Random.initialSeed($Basics.round(startTime));
-      var _p15 = A2(initialElems,5,s1);
+      var _p15 = A2(initialElems,40,s1);
       var elems = _p15._0;
       var s2 = _p15._1;
       var model = {elems: elems};
@@ -6005,7 +6005,7 @@ Elm.RwBasicModel.make = function (_elm) {
       var panelDim = _p17._0;
       var nextSeed = _p17._1;
       var nextElems = _p17._2;
-      var nextModel = _U.update(model,{elems: nextElems});
+      var nextModel = _U.update(model,{elems: $List.reverse(nextElems)});
       return $Maybe.Just({ctor: "_Tuple2",_0: nextModel,_1: nextSeed});
    });
    var Inp = F2(function (a,b) {    return {time: a,panelDim: b};});
