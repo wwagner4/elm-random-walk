@@ -98,42 +98,44 @@ animValue time anim=
     anim.startVal + diff
     
         
-updateAnimElem : Time -> Anim -> Elem -> Elem
-updateAnimElem time anim elem = 
-  let
-    animReady = (time - anim.startTime) > anim.duration
-  in
-    if (animReady) then
-      { elem | x = animValue time anim 
-        , anim = Nothing }
-    else
-      { elem | x = animValue time anim }
-  
-
-updateNoAnimElem : Inp -> Elem -> Elem
-updateNoAnimElem inp elem = 
-  let 
-    maxX = inp.panelSize.w / 2
-    minX = -maxX
-    gen = 
-      if (elem.x > maxX) then Random.float -500 0
-      else if (elem.x < minX) then Random.float 0 500
-      else Random.float -500 500
-    (to, nextSeed) = generate gen elem.seed
-    newAnim = 
-      { startVal = elem.x 
-      , startTime = inp.time
-      , duration = second * 5 
-      , to = to}
-  in
-    { elem | seed = nextSeed
-      , anim = Just newAnim }
-
 updateElem : Inp -> Elem -> Elem
 updateElem inp elem = 
-  case elem.anim of
-    Just anim -> updateAnimElem inp.time anim elem
-    Nothing -> updateNoAnimElem inp elem
+  let
+    updateAnimElem : Time -> Anim -> Elem -> Elem
+    updateAnimElem time anim elem = 
+      let
+        animReady = (time - anim.startTime) > anim.duration
+      in
+        if (animReady) then
+          { elem | x = animValue time anim 
+            , anim = Nothing }
+        else
+          { elem | x = animValue time anim }
+      
+    
+    updateNoAnimElem : Inp -> Elem -> Elem
+    updateNoAnimElem inp elem = 
+      let 
+        maxX = inp.panelSize.w / 2
+        minX = -maxX
+        gen = 
+          if (elem.x > maxX) then Random.float -500 0
+          else if (elem.x < minX) then Random.float 0 500
+          else Random.float -500 500
+        (to, nextSeed) = generate gen elem.seed
+        newAnim = 
+          { startVal = elem.x 
+          , startTime = inp.time
+          , duration = second * 5 
+          , to = to}
+      in
+        { elem | seed = nextSeed
+          , anim = Just newAnim }
+    
+  in
+    case elem.anim of
+      Just anim -> updateAnimElem inp.time anim elem
+      Nothing -> updateNoAnimElem inp elem
 
 
 updateModel : Inp -> Maybe Model -> Maybe Model
