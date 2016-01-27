@@ -123,7 +123,7 @@ updateElem inp elem =
         updateNothingAnim : Float -> Float -> (Maybe Anim, Seed)
         updateNothingAnim span value = 
           let
-            maxVal = span / 2 + 150
+            maxVal = span / 2 - 50
             minVal = -maxVal
             maxRan = 100
             gen = 
