@@ -81,26 +81,26 @@ initial time =
   in
     { elems = elems}
 
-animEaseValue : Time -> Time -> Float -> Float
-animEaseValue relTime duration to =
-  let
-    from = 0
-  in
-    ease easeOutCubic Easing.float from to duration relTime
-
-
-animValue : Time -> Anim -> Float
-animValue time anim= 
-  let
-    relTime = time - anim.startTime
-    diff = animEaseValue relTime anim.duration anim.to 
-  in 
-    anim.startVal + diff
-    
-        
 updateElem : Inp -> Elem -> Elem
 updateElem inp elem = 
   let
+    animValue : Time -> Anim -> Float
+    animValue time anim= 
+      let
+        animEaseValue : Time -> Time -> Float -> Float
+        animEaseValue relTime duration to =
+          let
+            from = 0
+          in
+            ease easeOutCubic Easing.float from to duration relTime
+    
+    
+        relTime = time - anim.startTime
+        diff = animEaseValue relTime anim.duration anim.to 
+      in 
+        anim.startVal + diff
+    
+        
     updateAnimElem : Time -> Anim -> Elem -> Elem
     updateAnimElem time anim elem = 
       let
