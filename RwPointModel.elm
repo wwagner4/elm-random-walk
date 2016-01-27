@@ -76,7 +76,7 @@ initial time =
 
 
     seed = initialSeed (round time)
-    seeds = initialSeeds seed 30
+    seeds = initialSeeds seed 1
     elems = List.map initialElem seeds
   in
     { elems = elems}
