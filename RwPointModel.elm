@@ -60,21 +60,21 @@ ranColor seed =
     (color, nextSeed)
 
       
-initialElem : Seed -> Elem
-initialElem seed = 
-  let
-    (color, nextSeed) = ranColor seed
-  in
-    { x = 0
-    , y = 0
-    , color = color
-    , anim = Nothing 
-    , seed = nextSeed }
-
-
 initial : Time -> Model
 initial time = 
   let
+    initialElem : Seed -> Elem
+    initialElem seed = 
+      let
+        (color, nextSeed) = ranColor seed
+      in
+        { x = 0
+        , y = 0
+        , color = color
+        , anim = Nothing 
+        , seed = nextSeed }
+
+
     seed = initialSeed (round time)
     seeds = initialSeeds seed 30
     elems = List.map initialElem seeds
