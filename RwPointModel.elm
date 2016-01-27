@@ -12,7 +12,8 @@ type alias Elem =
   { x : Float
   , y : Float
   , color : Color
-  , anim : Maybe Anim 
+  , animX : Maybe Anim 
+  , animY : Maybe Anim 
   , seed : Seed }
   
   
@@ -71,7 +72,8 @@ initial time =
         { x = 0
         , y = 0
         , color = color
-        , anim = Nothing 
+        , animX = Nothing 
+        , animY = Nothing 
         , seed = nextSeed }
 
 
@@ -84,59 +86,72 @@ initial time =
 updateElem : Inp -> Elem -> Elem
 updateElem inp elem = 
   let
-    animValue : Time -> Anim -> Float
-    animValue time anim= 
+    animValue : Anim -> Float
+    animValue anim = 
       let
         animEaseValue : Time -> Time -> Float -> Float
         animEaseValue relTime duration to =
-          let
-            from = 0
-          in
-            ease easeOutCubic Easing.float from to duration relTime
+          ease easeOutCubic Easing.float 0 to duration relTime
     
-    
-        relTime = time - anim.startTime
+        relTime = inp.time - anim.startTime
         diff = animEaseValue relTime anim.duration anim.to 
       in 
         anim.startVal + diff
     
         
-    updateAnimElem : Time -> Anim -> Elem -> Elem
-    updateAnimElem time anim elem = 
+    updateAnim : Seed -> Float -> Float -> Maybe Anim -> (Maybe Anim, Seed)
+    updateAnim seed span value maybeAnim =
       let
-        animReady = (time - anim.startTime) > anim.duration
-      in
-        if (animReady) then
-          { elem | x = animValue time anim 
-            , anim = Nothing }
-        else
-          { elem | x = animValue time anim }
-      
-    
-    updateNoAnimElem : Inp -> Elem -> Elem
-    updateNoAnimElem inp elem = 
-      let 
-        maxX = inp.panelSize.w / 2
-        minX = -maxX
-        gen = 
-          if (elem.x > maxX) then Random.float -500 0
-          else if (elem.x < minX) then Random.float 0 500
-          else Random.float -500 500
-        (to, nextSeed) = generate gen elem.seed
-        newAnim = 
-          { startVal = elem.x 
-          , startTime = inp.time
-          , duration = second * 5 
-          , to = to}
-      in
-        { elem | seed = nextSeed
-          , anim = Just newAnim }
-    
-  in
-    case elem.anim of
-      Just anim -> updateAnimElem inp.time anim elem
-      Nothing -> updateNoAnimElem inp elem
+        updateJustAnim : Float -> Anim -> (Maybe Anim, Seed)
+        updateJustAnim value anim = 
+          let
+            animReady = (inp.time - anim.startTime) > anim.duration
+          in
+            if (animReady) then (Nothing, seed)
+            else (Just anim, seed)
+            
 
+        updateNothingAnim : Float -> Float -> (Maybe Anim, Seed)
+        updateNothingAnim span value = 
+          let
+            maxVal = span / 2
+            minVal = -maxVal
+            gen = 
+              if (value > maxVal) then Random.float -500 0
+              else if (value < minVal) then Random.float 0 500
+              else Random.float -500 500
+            (to, nextSeed) = generate gen seed
+            newAnim = 
+              { startVal = value
+              , startTime = inp.time
+              , duration = second * 1 
+              , to = to}
+          in
+            (Just newAnim, nextSeed)
+        
+      in
+        case maybeAnim of
+          Just anim -> updateJustAnim value anim
+          Nothing -> updateNothingAnim span value
+          
+
+    updateValue : (Maybe Anim) -> Float -> Float
+    updateValue maybeAnim value =
+      case maybeAnim of
+        Just anim -> animValue anim
+        Nothing -> value
+    
+    nextX = updateValue elem.animX elem.x 
+    nextY = updateValue elem.animY elem.y
+    (nextAnimX, s1) = updateAnim elem.seed inp.panelSize.w elem.x elem.animX
+    (nextAnimY, s2) = updateAnim s1 inp.panelSize.h elem.y elem.animY
+  in
+    { elem | x = nextX
+      , y = nextY
+      , animX = nextAnimX
+      , animY = nextAnimY
+      , seed = s2 }
+      
 
 updateModel : Inp -> Maybe Model -> Maybe Model
 updateModel inp maybeModel = 
