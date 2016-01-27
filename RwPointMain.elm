@@ -10,7 +10,7 @@ import Window exposing (..)
 import Maybe exposing (..)
 
 timeSig : Signal Time
-timeSig = every (Time.millisecond * 10)
+timeSig = every (Time.millisecond * 70)
 
 
 toPanelSize : (Int, Int) -> PanelSize

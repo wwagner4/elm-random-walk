@@ -10,9 +10,9 @@ import RwPointModel exposing (..)
 
 elemToForm : Elem -> Form
 elemToForm elem =
-  square 150
+  circle 50
     |> filled elem.color
-    |> alpha 0.5
+    |> alpha 0.4
     |> move (elem.x, elem.y)
   
   
