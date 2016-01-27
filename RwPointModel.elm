@@ -49,16 +49,24 @@ initialSeeds seed count =
       nextSeed :: rest
       
 ranColor : Seed -> (Color, Seed)
-ranColor seed = 
+ranColor seed =
+  let
+    gen = Random.float 0 360
+    (ranDeg, nextSeed) = generate gen seed
+    col = hsl (degrees ranDeg) 1 0.5
+  in
     (col, nextSeed)
 
+
+ranColor1 : Seed -> (Color, Seed)
+ranColor1 seed = 
   let 
     (i, nextSeed) = generate (Random.int 1 3) seed
     color = 
       if (i == 1) then Color.red
       else if (i == 2) then Color.green
       else Color.blue
-  in
+   in
     (color, nextSeed)
 
       
@@ -79,6 +87,7 @@ initial time =
 
 
     seed = initialSeed (round time)
+    seeds = initialSeeds seed 100
     elems = List.map initialElem seeds
   in
     { elems = elems}
@@ -91,6 +100,7 @@ updateElem inp elem =
       let
         animEaseValue : Time -> Time -> Float -> Float
         animEaseValue relTime duration to =
+          ease easeInExpo Easing.float 0 to duration relTime
     
         relTime = inp.time - anim.startTime
         diff = animEaseValue relTime anim.duration anim.to 
@@ -113,12 +123,18 @@ updateElem inp elem =
         updateNothingAnim : Float -> Float -> (Maybe Anim, Seed)
         updateNothingAnim span value = 
           let
+            maxVal = span / 2 + 150
             minVal = -maxVal
+            maxRan = 100
             gen = 
+              if (value > maxVal) then Random.float -maxRan 0
+              else if (value < minVal) then Random.float 0 maxRan
+              else Random.float -maxRan maxRan
             (to, nextSeed) = generate gen seed
             newAnim = 
               { startVal = value
               , startTime = inp.time
+              , duration = second * 1
               , to = to}
           in
             (Just newAnim, nextSeed)
