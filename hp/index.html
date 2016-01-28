@@ -5,16 +5,16 @@
   <meta charset="utf-8">
   <link href='https://fonts.googleapis.com/css?family=Special+Elite' rel='stylesheet' type='text/css'>
   <style>
-  body {font-family: 'Special Elite', cursive; font-size:1em;margin-left: auto; margin-right: auto;
+body {font-family: 'Special Elite', cursive; font-size:1em;margin-left: auto; margin-right: auto;
     background-image: url("bg1.png"); max-width:700px;}
 header, nav, section, article, footer
-  {border:0px solid grey; margin:0px; padding:5px;}
-#rwbasic {height: 300px; background-color: rgba(255, 255, 255, 0.4); border:1px solid rgba(120, 120, 120, 0.1); }
-#rweasing {height: 300px; background-color: rgba(255, 255, 255, 0.4); border:1px solid rgba(120, 120, 120, 0.1); }
+    {border:0px solid grey; margin:0px; padding:5px;}
+.rwdiv {height: 300px; background-color: rgba(255, 255, 255, 0.4); border:1px solid rgba(120, 120, 120, 0.1); margin-bottom : 10px; }
 #cont {background-color: rgba(255, 255, 255, 0.7); }
   </style>
   <script src="rwbasic.js"></script>
   <script src="rweasing.js"></script>
+  <script src="rweasing1.js"></script>
 </head>
 <body>
   <div id="cont">
@@ -36,7 +36,7 @@ header, nav, section, article, footer
     Handling of random values.
     Random initialisation by time.</p>
   <p><a href="https://github.com/wwagner4/elm-random-walk">Source code</a></p>
-  <div id="rwbasic"></div>
+  <div class="rwdiv" id="rwbasic"></div>
   </article>
 
   <article>
@@ -46,7 +46,8 @@ header, nav, section, article, footer
     Alternate usage of random values in lists.
   </p>
   <p><a href="https://github.com/wwagner4/elm-random-walk">Source code</a></p>
-  <div id="rweasing"></div>
+  <div class="rwdiv" id="rweasing"></div>
+  <div class="rwdiv" id="rweasing1"></div>
   </article>
 
   </section>
@@ -60,6 +61,8 @@ header, nav, section, article, footer
       Elm.embed(Elm.RwBasicReactive, rwbasicDiv);
       var rweasingDiv = document.getElementById('rweasing');
       Elm.embed(Elm.RwEasingMain, rweasingDiv);
+      var rweasingDiv = document.getElementById('rweasing1');
+      Elm.embed(Elm.RwEasing1Main, rweasingDiv);
   </script>
 
 
