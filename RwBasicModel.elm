@@ -75,7 +75,7 @@ initial : Time -> (Model, Seed)
 initial startTime =
   let
     s1 = initialSeed (round startTime)
-    (elems, s2) = initialElems 40 s1
+    (elems, s2) = initialElems 400 s1
     model =
       { elems = elems }
     in
@@ -96,7 +96,7 @@ ranBool : Seed -> (Bool, Seed)
 ranBool seed =
   let
     (int, nextSeed) = generate (Random.int 1 1000) seed
-    bool = int < 10
+    bool = int < 100
   in
     (bool, nextSeed)
 
