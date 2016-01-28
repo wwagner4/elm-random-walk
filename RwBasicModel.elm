@@ -101,29 +101,29 @@ ranBool seed =
     (bool, nextSeed)
 
 
-updateVal : Seed -> Float -> (Float, Seed)
-updateVal seed val =
-  let
-    (diff, nextSeed) = ranDiff seed
-    nextVal = val + diff
-  in
-    (nextVal, nextSeed)
-
-
-adjustVal : Float -> Float -> Float
-adjustVal span val =
-  let
-    maxVal = span / 2.0
-    minVal = -maxVal
-    r1 = min val maxVal
-    r2 = max r1 minVal
-  in
-    r2
-
-
 updatePos : PanelDim -> Seed -> Pos -> (Pos, Seed)
 updatePos panel seed pos =
   let
+    updateVal : Seed -> Float -> (Float, Seed)
+    updateVal seed val =
+      let
+        (diff, nextSeed) = ranDiff seed
+        nextVal = val + diff
+      in
+        (nextVal, nextSeed)
+    
+    
+    adjustVal : Float -> Float -> Float
+    adjustVal span val =
+      let
+        maxVal = span / 2.0
+        minVal = -maxVal
+        r1 = min val maxVal
+        r2 = max r1 minVal
+      in
+        r2
+
+
     border = 50
     (nextX, s1) = updateVal seed pos.x
     (nextY, s2) = updateVal s1 pos.y
@@ -146,25 +146,25 @@ updateElem panel seed elem =
     (nextElem, s2)
 
 
-updateFoldElem : Elem -> (PanelDim, Seed, List Elem) -> (PanelDim, Seed, List Elem)
-updateFoldElem elem (panelDim, seed, elems) =
-  let
-    (nextElem, nextSeed) = updateElem panelDim seed elem
-    nextElems = nextElem :: elems
-  in
-    (panelDim, nextSeed, nextElems)
-
-
 update : Inp -> Maybe (Model, Seed) -> Maybe (Model, Seed)
 update inp maybeModel =
   let
-
     (model, seed) = withDefault (initial inp.time) maybeModel
+    
 
-    (panelDim, nextSeed, nextElems) =
+    updateFoldElem : Elem -> (Seed, List Elem) -> (Seed, List Elem)
+    updateFoldElem elem (seed, elems) =
+      let
+        (nextElem, nextSeed) = updateElem inp.panelDim seed elem
+        nextElems = nextElem :: elems
+      in
+        (nextSeed, nextElems)
+
+
+    (nextSeed, nextElems) =
       List.foldr
         updateFoldElem
-        (inp.panelDim, seed, [])
+        (seed, [])
         model.elems
 
     nextModel = { model | elems = nextElems }
