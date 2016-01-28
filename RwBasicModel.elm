@@ -34,46 +34,46 @@ inp time panelDim =
   , panelDim = panelDim }
 
 
-initialPos : Pos
-initialPos = { x = 0.0, y = 0.0 }
-
-
-ranColor : Seed -> (Color, Seed)
-ranColor seed =
-  let
-    gen = Random.float 0 360
-    (ranDeg, nextSeed) = generate gen seed
-    col = hsl (degrees ranDeg) 1 0.5
-  in
-    (col, nextSeed)
-
-
-initialElem : Seed -> (Elem, Seed)
-initialElem seed =
-  let
-    (col, nextSeed) = ranColor seed
-    elem =
-      { pos = initialPos
-      , color = col }
-  in
-    (elem, nextSeed)
-
-
-initialElems : Int -> Seed -> (List Elem, Seed)
-initialElems cnt seed =
-  if cnt == 0 then ([], seed)
-  else
-    let
-      (elem, s1) = initialElem seed
-      (restElems, s2) = initialElems (cnt - 1) s1
-      elems = elem :: restElems
-    in
-      (elems, s2)
-
-
 initial : Time -> (Model, Seed)
 initial startTime =
   let
+    initialElem : Seed -> (Elem, Seed)
+    initialElem seed =
+      let
+        initialPos : Pos
+        initialPos = { x = 0.0, y = 0.0 }
+    
+    
+        ranColor : Seed -> (Color, Seed)
+        ranColor seed =
+          let
+            gen = Random.float 0 360
+            (ranDeg, nextSeed) = generate gen seed
+            col = hsl (degrees ranDeg) 1 0.5
+          in
+            (col, nextSeed)
+    
+    
+        (col, nextSeed) = ranColor seed
+        elem =
+          { pos = initialPos
+          , color = col }
+      in
+        (elem, nextSeed)
+
+
+    initialElems : Int -> Seed -> (List Elem, Seed)
+    initialElems cnt seed =
+      if cnt == 0 then ([], seed)
+      else
+        let
+          (elem, s1) = initialElem seed
+          (restElems, s2) = initialElems (cnt - 1) s1
+          elems = elem :: restElems
+        in
+          (elems, s2)
+
+
     s1 = initialSeed (round startTime)
     (elems, s2) = initialElems 400 s1
     model =
@@ -82,31 +82,31 @@ initial startTime =
       (model, s2)
 
 
-ranDiff : Seed -> (Float, Seed)
-ranDiff seed =
-  let
-    diffVal = 2.0
-    gen = Random.float -diffVal diffVal
-    (diff, nextSeed) = generate gen seed
-  in
-    (diff * 10, nextSeed)
-
-
-ranBool : Seed -> (Bool, Seed)
-ranBool seed =
-  let
-    (int, nextSeed) = generate (Random.int 1 1000) seed
-    bool = int < 100
-  in
-    (bool, nextSeed)
-
-
 updateElem : PanelDim -> Seed -> Elem -> (Elem, Seed)
 updateElem panel seed elem =
   let
+    ranBool : Seed -> (Bool, Seed)
+    ranBool seed =
+      let
+        (int, nextSeed) = generate (Random.int 1 1000) seed
+        bool = int < 10
+      in
+        (bool, nextSeed)
+
+
     updatePos : PanelDim -> Seed -> Pos -> (Pos, Seed)
     updatePos panel seed pos =
       let
+        ranDiff : Seed -> (Float, Seed)
+        ranDiff seed =
+          let
+            diffVal = 10.0
+            gen = Random.float -diffVal diffVal
+            (diff, nextSeed) = generate gen seed
+          in
+            (diff * 10, nextSeed)
+
+
         updateVal : Seed -> Float -> (Float, Seed)
         updateVal seed val =
           let
@@ -138,12 +138,14 @@ updateElem panel seed elem =
 
 
     (doMove, s1) = ranBool seed
-    (nextPos, s2) = updatePos panel s1 elem.pos
-    nextElem =
-      if doMove then { elem | pos = nextPos }
-      else elem
   in
-    (nextElem, s2)
+    if doMove then 
+      let
+        (nextPos, s2) = updatePos panel s1 elem.pos
+      in
+        ({ elem | pos = nextPos }, s2)
+    else 
+      (elem, s1)
 
 
 update : Inp -> Maybe (Model, Seed) -> Maybe (Model, Seed)
