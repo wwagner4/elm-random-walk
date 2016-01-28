@@ -1,7 +1,7 @@
-module RwPointMain where
+module RwEasing1Main where
 
-import RwPointModel exposing (..)
-import RwPointView exposing (..)
+import RwEasing1Model exposing (..)
+import RwEasing1View exposing (..)
 
 import Graphics.Element exposing (..)
 import Signal exposing (..)

@@ -1,4 +1,4 @@
-module RwPointModel where
+module RwEasing1Model where
 
 import Time exposing (..)
 import Easing exposing (..)

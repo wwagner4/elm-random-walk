@@ -1,12 +1,12 @@
-module RwPointView where
+module RwEasing1View where
+
+import RwEasing1Model exposing (..)
 
 import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
 import Time exposing (..)
 import Maybe exposing (..)
 import Color exposing (..)
-
-import RwPointModel exposing (..)
 
 elemToForm : Elem -> Form
 elemToForm elem =
