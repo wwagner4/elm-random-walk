@@ -39,22 +39,12 @@ inp time panelDim =
 update : Inp -> Maybe (Model, Seed) -> Maybe (Model, Seed)
 update inp maybeModel =
   let
-    updateElem : PanelDim -> Seed -> Elem -> (Elem, Seed)
-    updateElem panel seed elem =
+    updateElem : Seed -> Elem -> (Elem, Seed)
+    updateElem seed elem =
       let
-        updatePos : PanelDim -> Seed -> Pos -> (Pos, Seed)
-        updatePos panel seed pos =
+        updatePos : Seed -> Pos -> (Pos, Seed)
+        updatePos seed pos =
           let
-            ranDiff : Seed -> (Float, Seed)
-            ranDiff seed =
-              let
-                diffVal = 10.0
-                gen = Random.float -diffVal diffVal
-                (diff, nextSeed) = generate gen seed
-              in
-                (diff * 10, nextSeed)
-    
-    
             updateVal : Seed -> Float -> (Float, Seed)
             updateVal seed val =
               let
@@ -76,6 +66,7 @@ update inp maybeModel =
         
         
             border = 50
+            panel = inp.panelDim
             (nextX, s1) = updateVal seed pos.x
             (nextY, s2) = updateVal s1 pos.y
             adjX = adjustVal (panel.w - border * 2) nextX
@@ -89,7 +80,7 @@ update inp maybeModel =
         elemTupl = 
           if doMove then 
             let
-              (nextPos, s2) = updatePos panel s1 elem.pos
+              (nextPos, s2) = updatePos s1 elem.pos
             in
               ({ elem | pos = nextPos }, s2)
           else 
@@ -100,7 +91,7 @@ update inp maybeModel =
     updateElems : Elem -> (Seed, List Elem) -> (Seed, List Elem)
     updateElems elem (seed, elems) =
       let
-        (nextElem, nextSeed) = updateElem inp.panelDim seed elem
+        (nextElem, nextSeed) = updateElem seed elem
         nextElems = nextElem :: elems
       in
         (nextSeed, nextElems)
@@ -155,10 +146,8 @@ update inp maybeModel =
 
 
     (model, seed) = withDefault (initial inp.time) maybeModel
-
     (nextSeed, nextElems) =
       List.foldr updateElems (seed, []) model.elems
-    
     nextModel = { model | elems = nextElems }
   in
     Just (nextModel, nextSeed)
