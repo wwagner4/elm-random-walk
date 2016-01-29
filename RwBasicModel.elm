@@ -1,5 +1,7 @@
 module RwBasicModel where
 
+import RwCommon exposing (..)
+
 import Random exposing (..)
 import Color exposing (..)
 import Time exposing (..)
@@ -85,15 +87,6 @@ initial startTime =
 updateElem : PanelDim -> Seed -> Elem -> (Elem, Seed)
 updateElem panel seed elem =
   let
-    ranBool : Seed -> (Bool, Seed)
-    ranBool seed =
-      let
-        (int, nextSeed) = generate (Random.int 1 1000) seed
-        bool = int < 10
-      in
-        (bool, nextSeed)
-
-
     updatePos : PanelDim -> Seed -> Pos -> (Pos, Seed)
     updatePos panel seed pos =
       let

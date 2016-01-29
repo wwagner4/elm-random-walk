@@ -5900,111 +5900,110 @@ Elm.RwBasicModel.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Time = Elm.Time.make(_elm);
    var _op = {};
-   var adjustVal = F2(function (span,val) {
-      var maxVal = span / 2.0;
-      var minVal = 0 - maxVal;
-      var r1 = A2($Basics.min,val,maxVal);
-      var r2 = A2($Basics.max,r1,minVal);
-      return r2;
-   });
-   var ranBool = function (seed) {
-      var _p0 = A2($Random.generate,A2($Random.$int,1,1000),seed);
-      var $int = _p0._0;
-      var nextSeed = _p0._1;
-      var bool = _U.cmp($int,10) < 0;
-      return {ctor: "_Tuple2",_0: bool,_1: nextSeed};
-   };
-   var ranDiff = function (seed) {
-      var diffVal = 2.0;
-      var gen = A2($Random.$float,0 - diffVal,diffVal);
-      var _p1 = A2($Random.generate,gen,seed);
-      var diff = _p1._0;
-      var nextSeed = _p1._1;
-      return {ctor: "_Tuple2",_0: diff * 10,_1: nextSeed};
-   };
-   var updateVal = F2(function (seed,val) {
-      var _p2 = ranDiff(seed);
-      var diff = _p2._0;
-      var nextSeed = _p2._1;
-      var nextVal = val + diff;
-      return {ctor: "_Tuple2",_0: nextVal,_1: nextSeed};
-   });
-   var updatePos = F3(function (panel,seed,pos) {
-      var _p3 = A2(updateVal,seed,pos.x);
-      var nextX = _p3._0;
-      var s1 = _p3._1;
-      var _p4 = A2(updateVal,s1,pos.y);
-      var nextY = _p4._0;
-      var s2 = _p4._1;
-      var border = 50;
-      var adjX = A2(adjustVal,panel.w - border * 2,nextX);
-      var adjY = A2(adjustVal,panel.h - border * 2,nextY);
-      var nextPos = _U.update(pos,{x: adjX,y: adjY});
-      return {ctor: "_Tuple2",_0: nextPos,_1: s2};
-   });
    var updateElem = F3(function (panel,seed,elem) {
+      var updatePos = F3(function (panel,seed,pos) {
+         var border = 50;
+         var adjustVal = F2(function (span,val) {
+            var maxVal = span / 2.0;
+            var minVal = 0 - maxVal;
+            var r1 = A2($Basics.min,val,maxVal);
+            var r2 = A2($Basics.max,r1,minVal);
+            return r2;
+         });
+         var ranDiff = function (seed) {
+            var diffVal = 10.0;
+            var gen = A2($Random.$float,0 - diffVal,diffVal);
+            var _p0 = A2($Random.generate,gen,seed);
+            var diff = _p0._0;
+            var nextSeed = _p0._1;
+            return {ctor: "_Tuple2",_0: diff * 10,_1: nextSeed};
+         };
+         var updateVal = F2(function (seed,val) {
+            var _p1 = ranDiff(seed);
+            var diff = _p1._0;
+            var nextSeed = _p1._1;
+            var nextVal = val + diff;
+            return {ctor: "_Tuple2",_0: nextVal,_1: nextSeed};
+         });
+         var _p2 = A2(updateVal,seed,pos.x);
+         var nextX = _p2._0;
+         var s1 = _p2._1;
+         var adjX = A2(adjustVal,panel.w - border * 2,nextX);
+         var _p3 = A2(updateVal,s1,pos.y);
+         var nextY = _p3._0;
+         var s2 = _p3._1;
+         var adjY = A2(adjustVal,panel.h - border * 2,nextY);
+         var nextPos = _U.update(pos,{x: adjX,y: adjY});
+         return {ctor: "_Tuple2",_0: nextPos,_1: s2};
+      });
+      var ranBool = function (seed) {
+         var _p4 = A2($Random.generate,A2($Random.$int,1,1000),seed);
+         var $int = _p4._0;
+         var nextSeed = _p4._1;
+         var bool = _U.cmp($int,10) < 0;
+         return {ctor: "_Tuple2",_0: bool,_1: nextSeed};
+      };
       var _p5 = ranBool(seed);
-      var bool = _p5._0;
+      var doMove = _p5._0;
       var s1 = _p5._1;
-      var _p6 = A3(updatePos,panel,s1,elem.pos);
-      var nextPos = _p6._0;
-      var s2 = _p6._1;
-      var nextElem = bool ? _U.update(elem,{pos: nextPos}) : elem;
-      return {ctor: "_Tuple2",_0: nextElem,_1: s2};
-   });
-   var updateFoldElem = F2(function (elem,_p7) {
-      var _p8 = _p7;
-      var _p10 = _p8._0;
-      var _p9 = A3(updateElem,_p10,_p8._1,elem);
-      var nextElem = _p9._0;
-      var nextSeed = _p9._1;
-      var nextElems = A2($List._op["::"],nextElem,_p8._2);
-      return {ctor: "_Tuple3",_0: _p10,_1: nextSeed,_2: nextElems};
-   });
-   var ranColor = function (seed) {
-      var gen = A2($Random.$float,0,360);
-      var _p11 = A2($Random.generate,gen,seed);
-      var ranDeg = _p11._0;
-      var nextSeed = _p11._1;
-      var col = A3($Color.hsl,$Basics.degrees(ranDeg),1,0.5);
-      return {ctor: "_Tuple2",_0: col,_1: nextSeed};
-   };
-   var initialPos = {x: 0.0,y: 0.0};
-   var initialElem = function (seed) {
-      var _p12 = ranColor(seed);
-      var col = _p12._0;
-      var nextSeed = _p12._1;
-      var elem = {pos: initialPos,color: col};
-      return {ctor: "_Tuple2",_0: elem,_1: nextSeed};
-   };
-   var initialElems = F2(function (cnt,seed) {
-      if (_U.eq(cnt,0)) return {ctor: "_Tuple2",_0: _U.list([]),_1: seed}; else {
-            var _p13 = initialElem(seed);
-            var elem = _p13._0;
-            var s1 = _p13._1;
-            var _p14 = A2(initialElems,cnt - 1,s1);
-            var restElems = _p14._0;
-            var s2 = _p14._1;
-            var elems = A2($List._op["::"],elem,restElems);
-            return {ctor: "_Tuple2",_0: elems,_1: s2};
-         }
+      if (doMove) {
+            var _p6 = A3(updatePos,panel,s1,elem.pos);
+            var nextPos = _p6._0;
+            var s2 = _p6._1;
+            return {ctor: "_Tuple2",_0: _U.update(elem,{pos: nextPos}),_1: s2};
+         } else return {ctor: "_Tuple2",_0: elem,_1: s1};
    });
    var initial = function (startTime) {
       var s1 = $Random.initialSeed($Basics.round(startTime));
-      var _p15 = A2(initialElems,40,s1);
-      var elems = _p15._0;
-      var s2 = _p15._1;
+      var initialElem = function (seed) {
+         var ranColor = function (seed) {
+            var gen = A2($Random.$float,0,360);
+            var _p7 = A2($Random.generate,gen,seed);
+            var ranDeg = _p7._0;
+            var nextSeed = _p7._1;
+            var col = A3($Color.hsl,$Basics.degrees(ranDeg),1,0.5);
+            return {ctor: "_Tuple2",_0: col,_1: nextSeed};
+         };
+         var _p8 = ranColor(seed);
+         var col = _p8._0;
+         var nextSeed = _p8._1;
+         var initialPos = {x: 0.0,y: 0.0};
+         var elem = {pos: initialPos,color: col};
+         return {ctor: "_Tuple2",_0: elem,_1: nextSeed};
+      };
+      var initialElems = F2(function (cnt,seed) {
+         if (_U.eq(cnt,0)) return {ctor: "_Tuple2",_0: _U.list([]),_1: seed}; else {
+               var _p9 = initialElem(seed);
+               var elem = _p9._0;
+               var s1 = _p9._1;
+               var _p10 = A2(initialElems,cnt - 1,s1);
+               var restElems = _p10._0;
+               var s2 = _p10._1;
+               var elems = A2($List._op["::"],elem,restElems);
+               return {ctor: "_Tuple2",_0: elems,_1: s2};
+            }
+      });
+      var _p11 = A2(initialElems,400,s1);
+      var elems = _p11._0;
+      var s2 = _p11._1;
       var model = {elems: elems};
       return {ctor: "_Tuple2",_0: model,_1: s2};
    };
    var update = F2(function (inp,maybeModel) {
-      var _p16 = A2($Maybe.withDefault,initial(inp.time),maybeModel);
-      var model = _p16._0;
-      var seed = _p16._1;
-      var _p17 = A3($List.foldr,updateFoldElem,{ctor: "_Tuple3",_0: inp.panelDim,_1: seed,_2: _U.list([])},model.elems);
-      var panelDim = _p17._0;
-      var nextSeed = _p17._1;
-      var nextElems = _p17._2;
+      var _p12 = A2($Maybe.withDefault,initial(inp.time),maybeModel);
+      var model = _p12._0;
+      var seed = _p12._1;
+      var updateElems = F2(function (elem,_p13) {
+         var _p14 = _p13;
+         var _p15 = A3(updateElem,inp.panelDim,_p14._0,elem);
+         var nextElem = _p15._0;
+         var nextSeed = _p15._1;
+         var nextElems = A2($List._op["::"],nextElem,_p14._1);
+         return {ctor: "_Tuple2",_0: nextSeed,_1: nextElems};
+      });
+      var _p16 = A3($List.foldr,updateElems,{ctor: "_Tuple2",_0: seed,_1: _U.list([])},model.elems);
+      var nextSeed = _p16._0;
+      var nextElems = _p16._1;
       var nextModel = _U.update(model,{elems: nextElems});
       return $Maybe.Just({ctor: "_Tuple2",_0: nextModel,_1: nextSeed});
    });
@@ -6021,18 +6020,8 @@ Elm.RwBasicModel.make = function (_elm) {
                                      ,Model: Model
                                      ,Inp: Inp
                                      ,inp: inp
-                                     ,initialPos: initialPos
-                                     ,ranColor: ranColor
-                                     ,initialElem: initialElem
-                                     ,initialElems: initialElems
                                      ,initial: initial
-                                     ,ranDiff: ranDiff
-                                     ,ranBool: ranBool
-                                     ,updateVal: updateVal
-                                     ,adjustVal: adjustVal
-                                     ,updatePos: updatePos
                                      ,updateElem: updateElem
-                                     ,updateFoldElem: updateFoldElem
                                      ,update: update};
 };
 Elm.RwBasicView = Elm.RwBasicView || {};
@@ -6090,7 +6079,7 @@ Elm.RwBasicReactive.make = function (_elm) {
       var toPanelDim = function (_p2) {    var _p3 = _p2;return {w: $Basics.toFloat(_p3._0),h: $Basics.toFloat(_p3._1)};};
       return A2($Signal.map,toPanelDim,$Window.dimensions);
    }();
-   var timeSig = $Time.every($Time.second * 1.0e-3);
+   var timeSig = $Time.every($Time.second * 5.0e-2);
    var inpSig = A3($Signal.map2,$RwBasicModel.inp,timeSig,panelDimSig);
    var modelSig = A3($Signal.foldp,$RwBasicModel.update,$Maybe.Nothing,inpSig);
    var main = A3($Signal.map2,$RwBasicView.view,panelDimSig,leftMaybeSig(modelSig));
