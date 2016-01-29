@@ -96,13 +96,13 @@ update inp maybeModel =
       in
         elemTupl        
 
-    updateElems : Elem -> (Seed, List Elem) -> (Seed, List Elem)
-    updateElems elem (seed, elems) =
+    updateElems : Elem -> (List Elem, Seed) -> (List Elem, Seed)
+    updateElems elem (elems, seed) =
       let
         (nextElem, nextSeed) = updateElem seed elem
         nextElems = nextElem :: elems
       in
-        (nextSeed, nextElems)
+        (nextElems, nextSeed)
 
 
     initial : Time -> (Model, Seed)
@@ -154,8 +154,8 @@ update inp maybeModel =
 
 
     (model, seed) = withDefault (initial inp.time) maybeModel
-    (nextSeed, nextElems) =
-      List.foldr updateElems (seed, []) model.elems
+    (nextElems, nextSeed) =
+      List.foldr updateElems ([], seed) model.elems
     nextModel = { model | elems = nextElems }
   in
     Just (nextModel, nextSeed)
