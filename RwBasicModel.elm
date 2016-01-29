@@ -84,66 +84,67 @@ initial startTime =
       (model, s2)
 
 
-updateElem : PanelDim -> Seed -> Elem -> (Elem, Seed)
-updateElem panel seed elem =
-  let
-    updatePos : PanelDim -> Seed -> Pos -> (Pos, Seed)
-    updatePos panel seed pos =
-      let
-        ranDiff : Seed -> (Float, Seed)
-        ranDiff seed =
-          let
-            diffVal = 10.0
-            gen = Random.float -diffVal diffVal
-            (diff, nextSeed) = generate gen seed
-          in
-            (diff * 10, nextSeed)
-
-
-        updateVal : Seed -> Float -> (Float, Seed)
-        updateVal seed val =
-          let
-            (diff, nextSeed) = ranDiff seed
-            nextVal = val + diff
-          in
-            (nextVal, nextSeed)
-        
-        
-        adjustVal : Float -> Float -> Float
-        adjustVal span val =
-          let
-            maxVal = span / 2.0
-            minVal = -maxVal
-            r1 = min val maxVal
-            r2 = max r1 minVal
-          in
-            r2
-    
-    
-        border = 50
-        (nextX, s1) = updateVal seed pos.x
-        (nextY, s2) = updateVal s1 pos.y
-        adjX = adjustVal (panel.w - border * 2) nextX
-        adjY = adjustVal (panel.h - border * 2) nextY
-        nextPos = { pos | x = adjX , y = adjY }
-      in
-        (nextPos, s2)
-
-
-    (doMove, s1) = ranBool seed
-  in
-    if doMove then 
-      let
-        (nextPos, s2) = updatePos panel s1 elem.pos
-      in
-        ({ elem | pos = nextPos }, s2)
-    else 
-      (elem, s1)
-
-
 update : Inp -> Maybe (Model, Seed) -> Maybe (Model, Seed)
 update inp maybeModel =
   let
+    updateElem : PanelDim -> Seed -> Elem -> (Elem, Seed)
+    updateElem panel seed elem =
+      let
+        updatePos : PanelDim -> Seed -> Pos -> (Pos, Seed)
+        updatePos panel seed pos =
+          let
+            ranDiff : Seed -> (Float, Seed)
+            ranDiff seed =
+              let
+                diffVal = 10.0
+                gen = Random.float -diffVal diffVal
+                (diff, nextSeed) = generate gen seed
+              in
+                (diff * 10, nextSeed)
+    
+    
+            updateVal : Seed -> Float -> (Float, Seed)
+            updateVal seed val =
+              let
+                (diff, nextSeed) = ranDiff seed
+                nextVal = val + diff
+              in
+                (nextVal, nextSeed)
+            
+            
+            adjustVal : Float -> Float -> Float
+            adjustVal span val =
+              let
+                maxVal = span / 2.0
+                minVal = -maxVal
+                r1 = min val maxVal
+                r2 = max r1 minVal
+              in
+                r2
+        
+        
+            border = 50
+            (nextX, s1) = updateVal seed pos.x
+            (nextY, s2) = updateVal s1 pos.y
+            adjX = adjustVal (panel.w - border * 2) nextX
+            adjY = adjustVal (panel.h - border * 2) nextY
+            nextPos = { pos | x = adjX , y = adjY }
+          in
+            (nextPos, s2)
+    
+    
+        (doMove, s1) = ranBool seed
+        elemTupl = 
+          if doMove then 
+            let
+              (nextPos, s2) = updatePos panel s1 elem.pos
+            in
+              ({ elem | pos = nextPos }, s2)
+          else 
+            (elem, s1)
+      in
+        elemTupl        
+
     updateElems : Elem -> (Seed, List Elem) -> (Seed, List Elem)
     updateElems elem (seed, elems) =
       let
