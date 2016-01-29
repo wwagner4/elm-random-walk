@@ -11,11 +11,10 @@ ranBool probabillity seed =
     (bool, nextSeed)
 
 
-ranDiff : Seed -> (Float, Seed)
-ranDiff seed =
+ranFloat : Float -> Seed -> (Float, Seed)
+ranFloat maxVal seed =
   let
-    diffVal = 10.0
-    gen = Random.float -diffVal diffVal
+    gen = Random.float -maxVal maxVal
     (diff, nextSeed) = generate gen seed
   in
     (diff * 10, nextSeed)

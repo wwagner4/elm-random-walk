@@ -11,6 +11,7 @@ import Maybe exposing (..)
 type alias Pos =
   { x: Float
   , y : Float }
+  
 
 type alias Elem =
   { pos : Pos
@@ -24,6 +25,13 @@ type alias Model =
 type alias PanelDim =
   { w : Float
   , h : Float }
+
+
+panelDim : Float -> Float -> PanelDim
+panelDim w h = 
+  { w = w
+  , h = h }
+
 
 type alias Inp =
   { time : Time
@@ -48,7 +56,7 @@ update inp maybeModel =
             updateVal : Seed -> Float -> (Float, Seed)
             updateVal seed val =
               let
-                (diff, nextSeed) = ranDiff seed
+                (diff, nextSeed) = ranFloat 10 seed
                 nextVal = val + diff
               in
                 (nextVal, nextSeed)

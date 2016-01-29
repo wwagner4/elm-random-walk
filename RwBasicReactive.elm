@@ -19,9 +19,13 @@ timeSig =
 panelDimSig : Signal PanelDim
 panelDimSig =
   let
-    toPanelDim (x, y) = {
-      w = toFloat x
-      , h = toFloat y }
+    toPanelDim : (Int, Int) -> PanelDim
+    toPanelDim (x, y) = 
+      let
+        w = toFloat x
+        h = toFloat y
+      in
+        panelDim w h
   in
     Signal.map toPanelDim Window.dimensions
 
