@@ -115,17 +115,7 @@ update inp maybeModel =
             initialPos = { x = 0.0, y = 0.0 }
         
         
-            ranColor : Seed -> (Color, Seed)
-            ranColor seed =
-              let
-                gen = Random.float 0 360
-                (ranDeg, nextSeed) = generate gen seed
-                col = hsl (degrees ranDeg) 1 0.5
-              in
-                (col, nextSeed)
-        
-        
-            (col, nextSeed) = ranColor seed
+            (col, nextSeed) = ranColorCompl seed 200
             elem =
               { pos = initialPos
               , color = col }
