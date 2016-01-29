@@ -36,54 +36,6 @@ inp time panelDim =
   , panelDim = panelDim }
 
 
-initial : Time -> (Model, Seed)
-initial startTime =
-  let
-    initialElem : Seed -> (Elem, Seed)
-    initialElem seed =
-      let
-        initialPos : Pos
-        initialPos = { x = 0.0, y = 0.0 }
-    
-    
-        ranColor : Seed -> (Color, Seed)
-        ranColor seed =
-          let
-            gen = Random.float 0 360
-            (ranDeg, nextSeed) = generate gen seed
-            col = hsl (degrees ranDeg) 1 0.5
-          in
-            (col, nextSeed)
-    
-    
-        (col, nextSeed) = ranColor seed
-        elem =
-          { pos = initialPos
-          , color = col }
-      in
-        (elem, nextSeed)
-
-
-    initialElems : Int -> Seed -> (List Elem, Seed)
-    initialElems cnt seed =
-      if cnt == 0 then ([], seed)
-      else
-        let
-          (elem, s1) = initialElem seed
-          (restElems, s2) = initialElems (cnt - 1) s1
-          elems = elem :: restElems
-        in
-          (elems, s2)
-
-
-    s1 = initialSeed (round startTime)
-    (elems, s2) = initialElems 400 s1
-    model =
-      { elems = elems }
-    in
-      (model, s2)
-
-
 update : Inp -> Maybe (Model, Seed) -> Maybe (Model, Seed)
 update inp maybeModel =
   let
@@ -152,6 +104,54 @@ update inp maybeModel =
         nextElems = nextElem :: elems
       in
         (nextSeed, nextElems)
+
+
+    initial : Time -> (Model, Seed)
+    initial startTime =
+      let
+        initialElem : Seed -> (Elem, Seed)
+        initialElem seed =
+          let
+            initialPos : Pos
+            initialPos = { x = 0.0, y = 0.0 }
+        
+        
+            ranColor : Seed -> (Color, Seed)
+            ranColor seed =
+              let
+                gen = Random.float 0 360
+                (ranDeg, nextSeed) = generate gen seed
+                col = hsl (degrees ranDeg) 1 0.5
+              in
+                (col, nextSeed)
+        
+        
+            (col, nextSeed) = ranColor seed
+            elem =
+              { pos = initialPos
+              , color = col }
+          in
+            (elem, nextSeed)
+    
+    
+        initialElems : Int -> Seed -> (List Elem, Seed)
+        initialElems cnt seed =
+          if cnt == 0 then ([], seed)
+          else
+            let
+              (elem, s1) = initialElem seed
+              (restElems, s2) = initialElems (cnt - 1) s1
+              elems = elem :: restElems
+            in
+              (elems, s2)
+    
+    
+        s1 = initialSeed (round startTime)
+        (elems, s2) = initialElems 400 s1
+        model =
+          { elems = elems }
+        in
+          (model, s2)
 
 
     (model, seed) = withDefault (initial inp.time) maybeModel
