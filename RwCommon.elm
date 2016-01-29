@@ -2,11 +2,11 @@ module RwCommon where
 
 import Random exposing (..)
 
-ranBool : Seed -> (Bool, Seed)
-ranBool seed =
+ranBool : Float -> Seed -> (Bool, Seed)
+ranBool probabillity seed =
   let
-    (int, nextSeed) = generate (Random.int 1 1000) seed
-    bool = int < 10
+    (val, nextSeed) = generate (Random.float 0 1) seed
+    bool = val <= probabillity 
   in
     (bool, nextSeed)
 

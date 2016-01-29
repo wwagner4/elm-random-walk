@@ -85,7 +85,7 @@ update inp maybeModel =
             (nextPos, s2)
     
     
-        (doMove, s1) = ranBool seed
+        (doMove, s1) = ranBool 0.02 seed
         elemTupl = 
           if doMove then 
             let
