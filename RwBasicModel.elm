@@ -8,10 +8,6 @@ import Time exposing (..)
 import Maybe exposing (..)
 
 
-type alias PanelDim =
-  { w : Float
-  , h : Float }
-
 type alias Pos =
   { x: Float
   , y : Float }
@@ -24,6 +20,10 @@ type alias Elem =
 type alias Model =
   { elems : List Elem }
 
+
+type alias PanelDim =
+  { w : Float
+  , h : Float }
 
 type alias Inp =
   { time : Time
