@@ -56,7 +56,7 @@ update inp maybeModel =
             updateVal : Seed -> Float -> (Float, Seed)
             updateVal seed val =
               let
-                (diff, nextSeed) = ranFloat 10 seed
+                (diff, nextSeed) = ranFloat 500 seed
                 nextVal = val + diff
               in
                 (nextVal, nextSeed)

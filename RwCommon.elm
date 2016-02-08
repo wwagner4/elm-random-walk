@@ -18,7 +18,7 @@ ranFloat maxVal seed =
     gen = Random.float -maxVal maxVal
     (diff, nextSeed) = generate gen seed
   in
-    (diff * 10, nextSeed)
+    (diff, nextSeed)
   
     
 ranColor : Seed -> (Color, Seed)
