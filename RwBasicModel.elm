@@ -60,7 +60,8 @@ update inp maybeModel =
                 minVal = -maxVal
                 (diff, s1) = ranInt 1 seed
                 (doMove, s2) = ranBool 0.1 s1 
-                nextVal = if doMove then val + (toFloat diff) * 20.0
+                nextVal = 
+                  if doMove then val + (toFloat diff) * 20.0
                   else val
                 adjVal = 
                   if nextVal > maxVal then val 
