@@ -53,33 +53,26 @@ update inp maybeModel =
         updatePos : Seed -> Pos -> (Pos, Seed)
         updatePos seed pos =
           let
-            updateVal : Seed -> Float -> (Float, Seed)
-            updateVal seed val =
-              let
-                (diff, nextSeed) = ranFloat 500 seed
-                nextVal = val + diff
-              in
-                (nextVal, nextSeed)
-            
-            
-            adjustVal : Float -> Float -> Float
-            adjustVal span val =
+            updateVal : Seed -> Float -> Float -> (Float, Seed)
+            updateVal seed span val =
               let
                 maxVal = span / 2.0
                 minVal = -maxVal
-                r1 = min val maxVal
-                r2 = max r1 minVal
+                (diff, nextSeed) = ranFloat 500 seed
+                nextVal = val + diff
+                adjVal = 
+                  if nextVal > maxVal then val 
+                  else if nextVal < minVal then val
+                  else nextVal
               in
-                r2
+                (adjVal, nextSeed)
         
         
-            border = 50
+            border = -150
             panel = inp.panelDim
-            (nextX, s1) = updateVal seed pos.x
-            (nextY, s2) = updateVal s1 pos.y
-            adjX = adjustVal (panel.w - border * 2) nextX
-            adjY = adjustVal (panel.h - border * 2) nextY
-            nextPos = { pos | x = adjX , y = adjY }
+            (nextX, s1) = updateVal seed (panel.w - border * 2) pos.x
+            (nextY, s2) = updateVal s1 (panel.h - border * 2)pos.y
+            nextPos = { pos | x = nextX , y = nextY }
           in
             (nextPos, s2)
     
