@@ -10,7 +10,7 @@ import Maybe exposing (..)
 
 toForm : Elem -> Form
 toForm elem =
-  square 80.0
+  square 60.0
     |> filled elem.color
     |> alpha 0.3
     |> move (elem.pos.x, elem.pos.y)

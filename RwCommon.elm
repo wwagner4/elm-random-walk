@@ -20,6 +20,22 @@ ranFloat maxVal seed =
   in
     (diff, nextSeed)
   
+ranPositiveFloat : Float -> Seed -> (Float, Seed)
+ranPositiveFloat maxVal seed =
+  let
+    gen = Random.float 0 maxVal
+    (diff, nextSeed) = generate gen seed
+  in
+    (diff, nextSeed)
+  
+ranInt : Int -> Seed -> (Int, Seed)
+ranInt maxVal seed =
+  let
+    gen = Random.int -maxVal maxVal
+    (diff, nextSeed) = generate gen seed
+  in
+    (diff, nextSeed)
+  
     
 ranColor : Seed -> (Color, Seed)
 ranColor seed =

@@ -58,8 +58,8 @@ update inp maybeModel =
               let
                 maxVal = span / 2.0
                 minVal = -maxVal
-                (diff, nextSeed) = ranFloat 500 seed
-                nextVal = val + diff
+                (diff, nextSeed) = ranInt 1 seed
+                nextVal = val + (toFloat diff) * 20.0
                 adjVal = 
                   if nextVal > maxVal then val 
                   else if nextVal < minVal then val
@@ -77,7 +77,7 @@ update inp maybeModel =
             (nextPos, s2)
     
     
-        (doMove, s1) = ranBool 0.02 seed
+        (doMove, s1) = ranBool 0.2 seed
         elemTupl = 
           if doMove then 
             let
@@ -101,14 +101,14 @@ update inp maybeModel =
     initial : Time -> (Model, Seed)
     initial startTime =
       let
-        initialElem : Seed -> (Elem, Seed)
-        initialElem seed =
+        initialElem : Float -> Seed -> (Elem, Seed)
+        initialElem colorOff seed =
           let
             initialPos : Pos
             initialPos = { x = 0.0, y = 0.0 }
         
         
-            (col, nextSeed) = ranColorCompl seed 200
+            (col, nextSeed) = ranColorCompl seed colorOff
             elem =
               { pos = initialPos
               , color = col }
@@ -116,24 +116,25 @@ update inp maybeModel =
             (elem, nextSeed)
     
     
-        initialElems : Int -> Seed -> (List Elem, Seed)
-        initialElems cnt seed =
+        initialElems : Int -> Float -> Seed -> (List Elem, Seed)
+        initialElems cnt colorOff seed =
           if cnt == 0 then ([], seed)
           else
             let
-              (elem, s1) = initialElem seed
-              (restElems, s2) = initialElems (cnt - 1) s1
+              (elem, s1) = initialElem colorOff seed
+              (restElems, s2) = initialElems (cnt - 1) colorOff s1
               elems = elem :: restElems
             in
               (elems, s2)
     
     
         s1 = initialSeed (round startTime)
-        (elems, s2) = initialElems 400 s1
+        (colorOff, s2) = ranPositiveFloat 300 s1
+        (elems, s3) = initialElems 400 colorOff s2
         model =
           { elems = elems }
         in
-          (model, s2)
+          (model, s3)
 
 
     (model, seed) = withDefault (initial inp.time) maybeModel
