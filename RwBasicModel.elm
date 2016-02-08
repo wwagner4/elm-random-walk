@@ -77,7 +77,7 @@ update inp maybeModel =
             (nextPos, s2)
     
     
-        (doMove, s1) = ranBool 0.2 seed
+        (doMove, s1) = ranBool 0.1 seed
         elemTupl = 
           if doMove then 
             let
@@ -131,10 +131,9 @@ update inp maybeModel =
         s1 = initialSeed (round startTime)
         (colorOff, s2) = ranPositiveFloat 300 s1
         (elems, s3) = initialElems 400 colorOff s2
-        model =
-          { elems = elems }
-        in
-          (model, s3)
+        nextModel = { elems = elems }
+      in
+        (nextModel, s3)
 
 
     (model, seed) = withDefault (initial inp.time) maybeModel
