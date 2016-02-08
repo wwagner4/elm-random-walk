@@ -58,14 +58,16 @@ update inp maybeModel =
               let
                 maxVal = span / 2.0
                 minVal = -maxVal
-                (diff, nextSeed) = ranInt 1 seed
-                nextVal = val + (toFloat diff) * 20.0
+                (diff, s1) = ranInt 1 seed
+                (doMove, s2) = ranBool 0.1 s1 
+                nextVal = if doMove then val + (toFloat diff) * 20.0
+                  else val
                 adjVal = 
                   if nextVal > maxVal then val 
                   else if nextVal < minVal then val
                   else nextVal
               in
-                (adjVal, nextSeed)
+                (adjVal, s2)
         
         
             border = -150
@@ -77,17 +79,10 @@ update inp maybeModel =
             (nextPos, s2)
     
     
-        (doMove, s1) = ranBool 0.1 seed
-        elemTupl = 
-          if doMove then 
-            let
-              (nextPos, s2) = updatePos s1 elem.pos
-            in
-              ({ elem | pos = nextPos }, s2)
-          else 
-            (elem, s1)
+        (nextPos, s1) = updatePos seed elem.pos
+        nextElem = { elem | pos = nextPos }
       in
-        elemTupl        
+        (nextElem, s1)        
 
     updateElems : Elem -> (List Elem, Seed) -> (List Elem, Seed)
     updateElems elem (elems, seed) =
@@ -98,8 +93,8 @@ update inp maybeModel =
         (nextElems, nextSeed)
 
 
-    initial : Time -> (Model, Seed)
-    initial startTime =
+    initial : (Model, Seed)
+    initial =
       let
         initialElem : Float -> Seed -> (Elem, Seed)
         initialElem colorOff seed =
@@ -128,15 +123,15 @@ update inp maybeModel =
               (elems, s2)
     
     
-        s1 = initialSeed (round startTime)
-        (colorOff, s2) = ranPositiveFloat 300 s1
-        (elems, s3) = initialElems 400 colorOff s2
-        nextModel = { elems = elems }
+        s1 = initialSeed (round inp.time)
+        (colorOff, s2) = ranPositiveFloat 360 s1
+        (newElems, s3) = initialElems 2000 colorOff s2
+        nextModel = { elems = newElems }
       in
         (nextModel, s3)
 
 
-    (model, seed) = withDefault (initial inp.time) maybeModel
+    (model, seed) = withDefault initial maybeModel
     (nextElems, nextSeed) =
       List.foldr updateElems ([], seed) model.elems
     nextModel = { model | elems = nextElems }

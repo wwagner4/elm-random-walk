@@ -13,7 +13,7 @@ import Random exposing (..)
 
 timeSig : Signal Time
 timeSig =
-  Time.every (Time.millisecond * 100)
+  Time.every (Time.second * 0.3)
 
 
 panelDimSig : Signal PanelDim
