@@ -3,6 +3,20 @@ module RwCommon where
 import Random exposing (..)
 import Color exposing (..)
 
+
+{-| Creates a list of seeds
+-}
+createSeedList : Seed -> Int -> List Seed
+createSeedList seed count =
+  if count == 0 then []
+  else 
+    let 
+      (i, nextSeed) = generate (Random.int minInt maxInt) seed
+      rest = createSeedList nextSeed (count - 1)
+    in
+      nextSeed :: rest
+
+
 ranBool : Float -> Seed -> (Bool, Seed)
 ranBool probabillity seed =
   let

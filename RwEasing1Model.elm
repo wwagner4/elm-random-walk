@@ -7,6 +7,8 @@ import Maybe exposing (..)
 import Color exposing (..)
 import Random exposing (..)
 
+import RwCommon exposing (..)
+
 
 type alias Elem =
   { x : Float
@@ -38,16 +40,6 @@ type alias Inp =
   , panelSize : PanelSize }
 
 
-initialSeeds : Seed -> Int -> List Seed
-initialSeeds seed count =
-  if count == 0 then []
-  else 
-    let 
-      (i, nextSeed) = generate (Random.int minInt maxInt) seed
-      rest = initialSeeds nextSeed (count - 1)
-    in
-      nextSeed :: rest
-      
 ranColor : Seed -> (Color, Seed)
 ranColor seed =
   let
@@ -70,24 +62,24 @@ ranColor1 seed =
     (color, nextSeed)
 
       
-initial : Time -> Model
-initial time = 
+initialModel : Time -> Model
+initialModel time = 
   let
     initialElem : Seed -> Elem
     initialElem seed = 
       let
-        (color, nextSeed) = ranColor seed
+        (color, s1) = ranColor seed
       in
         { x = 0
         , y = 0
         , color = color
         , animX = Nothing 
         , animY = Nothing 
-        , seed = nextSeed }
+        , seed = s1 }
 
 
     seed = initialSeed (round time)
-    seeds = initialSeeds seed 100
+    seeds = createSeedList seed 100
     elems = List.map initialElem seeds
   in
     { elems = elems}
@@ -95,19 +87,6 @@ initial time =
 updateElem : Inp -> Elem -> Elem
 updateElem inp elem = 
   let
-    animValue : Anim -> Float
-    animValue anim = 
-      let
-        animEaseValue : Time -> Time -> Float -> Float
-        animEaseValue relTime duration to =
-          ease easeInExpo Easing.float 0 to duration relTime
-    
-        relTime = inp.time - anim.startTime
-        diff = animEaseValue relTime anim.duration anim.to 
-      in 
-        anim.startVal + diff
-    
-        
     updateAnim : Seed -> Float -> Float -> Maybe Anim -> (Maybe Anim, Seed)
     updateAnim seed span value maybeAnim =
       let
@@ -147,28 +126,45 @@ updateElem inp elem =
 
     updateValue : (Maybe Anim) -> Float -> Float
     updateValue maybeAnim value =
-      case maybeAnim of
-        Just anim -> animValue anim
-        Nothing -> value
+      let 
+        easeValue : Time -> Time -> Float -> Float
+        easeValue relTime duration to =
+          ease easeInExpo Easing.float 0 to duration relTime
+        
+
+        animValue : Anim -> Float
+        animValue anim = 
+          let
+            relTime = inp.time - anim.startTime
+            diff = easeValue relTime anim.duration anim.to 
+          in 
+            anim.startVal + diff
+    
+        
+      in
+        case maybeAnim of
+          Just anim -> animValue anim
+          Nothing -> value
+        
     
     nextX = updateValue elem.animX elem.x 
     nextY = updateValue elem.animY elem.y
     (nextAnimX, s1) = updateAnim elem.seed inp.panelSize.w elem.x elem.animX
     (nextAnimY, s2) = updateAnim s1 inp.panelSize.h elem.y elem.animY
-  in
-    { elem | x = nextX
+    nextElem = { elem | x = nextX
       , y = nextY
       , animX = nextAnimX
       , animY = nextAnimY
       , seed = s2 }
+  in
+    nextElem
       
 
 updateModel : Inp -> Maybe Model -> Maybe Model
 updateModel inp maybeModel = 
   let
-    model = withDefault (initial inp.time) maybeModel
+    model = withDefault (initialModel inp.time) maybeModel
     nextElems = List.map (updateElem inp) model.elems
-    nextModel =
-      { model | elems = nextElems }
+    nextModel = { model | elems = nextElems }
   in 
     Just nextModel
