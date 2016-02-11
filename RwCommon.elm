@@ -6,13 +6,13 @@ import Color exposing (..)
 
 {-| Creates a list of seeds
 -}
-createSeedList : Seed -> Int -> List Seed
-createSeedList seed count =
+createSeedList : Int -> Seed -> List Seed
+createSeedList count seed =
   if count == 0 then []
   else 
     let 
       (i, nextSeed) = generate (Random.int minInt maxInt) seed
-      rest = createSeedList nextSeed (count - 1)
+      rest = createSeedList (count - 1) nextSeed 
     in
       nextSeed :: rest
 
@@ -61,8 +61,8 @@ ranColor seed =
     (col, nextSeed)
       
         
-ranColorCompl : Seed -> Float -> (Color, Seed)
-ranColorCompl seed hueOffset =
+ranColorCompl : Float -> Seed -> (Color, Seed)
+ranColorCompl hueOffset seed =
   let
     col1 = hsl (degrees hueOffset) 1 0.5
     col2 = hsl (degrees (hueOffset + 120)) 1 0.5

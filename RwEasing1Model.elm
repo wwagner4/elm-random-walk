@@ -40,28 +40,6 @@ type alias Inp =
   , panelSize : PanelSize }
 
 
-ranColor : Seed -> (Color, Seed)
-ranColor seed =
-  let
-    gen = Random.float 0 360
-    (ranDeg, nextSeed) = generate gen seed
-    col = hsl (degrees ranDeg) 1 0.5
-  in
-    (col, nextSeed)
-
-
-ranColor1 : Seed -> (Color, Seed)
-ranColor1 seed = 
-  let 
-    (i, nextSeed) = generate (Random.int 1 3) seed
-    color = 
-      if (i == 1) then Color.red
-      else if (i == 2) then Color.green
-      else Color.blue
-   in
-    (color, nextSeed)
-
-      
 initialModel : Time -> Model
 initialModel time = 
   let
@@ -79,7 +57,7 @@ initialModel time =
 
 
     seed = initialSeed (round time)
-    seeds = createSeedList seed 100
+    seeds = createSeedList 100 seed
     elems = List.map initialElem seeds
   in
     { elems = elems}
@@ -87,8 +65,8 @@ initialModel time =
 updateElem : Inp -> Elem -> Elem
 updateElem inp elem = 
   let
-    updateAnim : Seed -> Float -> Float -> Maybe Anim -> (Maybe Anim, Seed)
-    updateAnim seed span value maybeAnim =
+    updateAnim : Float -> Float -> Maybe Anim -> Seed -> (Maybe Anim, Seed)
+    updateAnim span value maybeAnim seed =
       let
         updateJustAnim : Float -> Anim -> (Maybe Anim, Seed)
         updateJustAnim value anim = 
@@ -149,8 +127,8 @@ updateElem inp elem =
     
     nextX = updateValue elem.animX elem.x 
     nextY = updateValue elem.animY elem.y
-    (nextAnimX, s1) = updateAnim elem.seed inp.panelSize.w elem.x elem.animX
-    (nextAnimY, s2) = updateAnim s1 inp.panelSize.h elem.y elem.animY
+    (nextAnimX, s1) = updateAnim inp.panelSize.w elem.x elem.animX elem.seed
+    (nextAnimY, s2) = updateAnim inp.panelSize.h elem.y elem.animY s1
     nextElem = { elem | x = nextX
       , y = nextY
       , animX = nextAnimX

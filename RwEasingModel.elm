@@ -1,5 +1,7 @@
 module RwEasingModel where
 
+import RwCommon exposing (..)
+
 import Time exposing (..)
 import Easing exposing (..)
 import Signal exposing (..)
@@ -37,77 +39,54 @@ type alias Inp =
   , panelSize : PanelSize }
 
 
-initialSeeds : Seed -> Int -> List Seed
-initialSeeds seed count =
-  if count == 0 then []
-  else 
-    let 
-      (i, nextSeed) = generate (Random.int minInt maxInt) seed
-      rest = initialSeeds nextSeed (count - 1)
-    in
-      nextSeed :: rest
-      
-      
-ranColor : Seed -> (Color, Seed)
-ranColor seed = 
-  let 
-    (i, nextSeed) = generate (Random.int 1 3) seed
-    color = 
-      if (i == 1) then Color.red
-      else if (i == 2) then Color.green
-      else Color.blue
-  in
-    (color, nextSeed)
-
-      
-initialElem : Seed -> Elem
-initialElem seed = 
+initialModel : Time -> Model
+initialModel time = 
   let
-    (color, nextSeed) = ranColor seed
-  in
-    { x = 0
-    , y = 0
-    , color = color
-    , anim = Nothing 
-    , seed = nextSeed }
+    initialElem : Seed -> Elem
+    initialElem seed = 
+      let
+        (color, nextSeed) = ranColor seed
+      in
+        { x = 0
+        , y = 0
+        , color = color
+        , anim = Nothing 
+        , seed = nextSeed }
 
 
-initial : Time -> Model
-initial time = 
-  let
     seed = initialSeed (round time)
-    seeds = initialSeeds seed 30
+    seeds = createSeedList 30 seed
     elems = List.map initialElem seeds
   in
     { elems = elems}
 
-animEaseValue : Time -> Time -> Float -> Float
-animEaseValue relTime duration to =
-  let
-    from = 0
-  in
-    ease easeOutCubic Easing.float from to duration relTime
-
-
-animValue : Time -> Anim -> Float
-animValue time anim= 
-  let
-    relTime = time - anim.startTime
-    diff = animEaseValue relTime anim.duration anim.to 
-  in 
-    anim.startVal + diff
     
-        
 updateAnimElem : Time -> Anim -> Elem -> Elem
 updateAnimElem time anim elem = 
   let
+    animEaseValue : Time -> Time -> Float -> Float
+    animEaseValue relTime duration to =
+      let
+        from = 0
+      in
+        ease easeOutCubic Easing.float from to duration relTime
+
+
+    animValue : Time -> Anim -> Float
+    animValue time anim= 
+      let
+        relTime = time - anim.startTime
+        diff = animEaseValue relTime anim.duration anim.to 
+      in 
+        anim.startVal + diff
+    
+        
     animReady = (time - anim.startTime) > anim.duration
+    nextAnim = 
+      if (animReady) then { elem | x = animValue time anim , anim = Nothing }
+      else { elem | x = animValue time anim }
   in
-    if (animReady) then
-      { elem | x = animValue time anim 
-        , anim = Nothing }
-    else
-      { elem | x = animValue time anim }
+    nextAnim
   
 
 updateNoAnimElem : Inp -> Elem -> Elem
@@ -139,7 +118,7 @@ updateElem inp elem =
 updateModel : Inp -> Maybe Model -> Maybe Model
 updateModel inp maybeModel = 
   let
-    model = withDefault (initial inp.time) maybeModel
+    model = withDefault (initialModel inp.time) maybeModel
     nextElems = List.map (updateElem inp) model.elems
     nextModel =
       { model | elems = nextElems }

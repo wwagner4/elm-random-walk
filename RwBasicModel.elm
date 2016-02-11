@@ -47,14 +47,14 @@ inp time panelDim =
 update : Inp -> Maybe (Model, Seed) -> Maybe (Model, Seed)
 update inp maybeModel =
   let
-    updateElem : Seed -> Elem -> (Elem, Seed)
-    updateElem seed elem =
+    updateElem : Elem -> Seed -> (Elem, Seed)
+    updateElem elem seed =
       let
-        updatePos : Seed -> Pos -> (Pos, Seed)
-        updatePos seed pos =
+        updatePos : Pos -> Seed -> (Pos, Seed)
+        updatePos pos seed =
           let
-            updateVal : Seed -> Float -> Float -> (Float, Seed)
-            updateVal seed span val =
+            updateVal : Float -> Float -> Seed -> (Float, Seed)
+            updateVal span val seed =
               let
                 maxVal = span / 2.0
                 minVal = -maxVal
@@ -73,14 +73,14 @@ update inp maybeModel =
         
             border = -150
             panel = inp.panelDim
-            (nextX, s1) = updateVal seed (panel.w - border * 2) pos.x
-            (nextY, s2) = updateVal s1 (panel.h - border * 2)pos.y
+            (nextX, s1) = updateVal (panel.w - border * 2) pos.x seed
+            (nextY, s2) = updateVal (panel.h - border * 2)pos.y s1
             nextPos = { pos | x = nextX , y = nextY }
           in
             (nextPos, s2)
     
     
-        (nextPos, s1) = updatePos seed elem.pos
+        (nextPos, s1) = updatePos elem.pos seed
         nextElem = { elem | pos = nextPos }
       in
         (nextElem, s1)        
@@ -88,7 +88,7 @@ update inp maybeModel =
     updateElems : Elem -> (List Elem, Seed) -> (List Elem, Seed)
     updateElems elem (elems, seed) =
       let
-        (nextElem, nextSeed) = updateElem seed elem
+        (nextElem, nextSeed) = updateElem elem seed
         nextElems = nextElem :: elems
       in
         (nextElems, nextSeed)
@@ -104,7 +104,7 @@ update inp maybeModel =
             initialPos = { x = 0.0, y = 0.0 }
         
         
-            (col, nextSeed) = ranColorCompl seed colorOff
+            (col, nextSeed) = ranColorCompl colorOff seed 
             elem =
               { pos = initialPos
               , color = col }
