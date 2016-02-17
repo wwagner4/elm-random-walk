@@ -15,12 +15,25 @@
       <arg value="--output"/>
       <arg value="hp/rweasing1.js"/>
     </exec>
+    <exec executable="elm-make">
+      <arg value="Roundabout.elm"/>
+      <arg value="--output"/>
+      <arg value="hp/roundabout.js"/>
+    </exec>
+    <exec executable="elm-make">
+      <arg value="Behaviour.elm"/>
+      <arg value="--output"/>
+      <arg value="hp/behaviour.js"/>
+    </exec>
+    <exec executable="elm-make">
+      <arg value="FollowTheClick.elm"/>
+      <arg value="--output"/>
+      <arg value="hp/followtheclick.js"/>
+    </exec>
     <copy todir="/Users/wwagner4/prj/entelijan-homepage/elm-random-walk">
       <fileset dir="hp">
         <include name="*"></include>
       </fileset>
     </copy>
-
   </target>
-
 </project>
