@@ -1,3 +1,5 @@
+module Behaviour where
+
 import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
 import Text exposing (..)
