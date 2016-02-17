@@ -59,7 +59,7 @@ type alias MoveBehaviour =
 moveBehaviour : Pos -> Time -> MoveBehaviour
 moveBehaviour pos time =
   let
-    maxVal = 200
+    maxVal = 350
 
     gen : Float -> Generator Float
     gen value =

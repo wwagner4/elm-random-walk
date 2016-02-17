@@ -74,7 +74,7 @@ type alias MoveBehaviour =
 moveBehaviour : MovementType -> Pos -> Seed -> MoveBehaviour
 moveBehaviour movementType pos seed =
   let
-    maxVal = 300
+    maxVal = 500
 
     gen : Float -> Generator Float
     gen value =
