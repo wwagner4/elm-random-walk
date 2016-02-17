@@ -27,6 +27,7 @@ header, nav, section, article, footer {
   <script src="rwbasic.js"></script>
   <script src="rweasing.js"></script>
   <script src="rweasing1.js"></script>
+  <script src="roundabout.js"></script>
 </head>
 <body>
   <div id="cont">
@@ -62,6 +63,13 @@ header, nav, section, article, footer {
   <div class="rwdiv" id="rweasing1"></div>
   </article>
 
+  <article>
+  <h2>Roundabout</h2>
+  <p>Statemachine waking from one state to the other</p>
+  <p><a href="https://github.com/wwagner4/elm-random-walk">Source code</a></p>
+  <div class="rwdiv" id="roundabout"></div>
+  </article>
+
   </section>
 
   <footer>
@@ -75,6 +83,8 @@ header, nav, section, article, footer {
       Elm.embed(Elm.RwEasingMain, rweasingDiv);
       var rweasingDiv = document.getElementById('rweasing1');
       Elm.embed(Elm.RwEasing1Main, rweasingDiv);
+      var rweasingDiv = document.getElementById('roundabout');
+      Elm.embed(Elm.Roundabout, rweasingDiv);
   </script>
 
 
