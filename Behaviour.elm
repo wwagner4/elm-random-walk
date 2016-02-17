@@ -59,7 +59,7 @@ type alias MoveBehaviour =
 moveBehaviour : Pos -> Time -> MoveBehaviour
 moveBehaviour pos time =
   let
-    maxVal = 600
+    maxVal = 200
 
     gen : Float -> Generator Float
     gen value =
@@ -165,7 +165,7 @@ view (w, h) maybeModel =
 
 
 modelSignal : Signal (Maybe Model)
-modelSignal = Signal.foldp updateModel Nothing (every (Time.millisecond * 30))
+modelSignal = Signal.foldp updateModel Nothing (every (Time.millisecond * 100))
 
 
 main = Signal.map2 view dimensions modelSignal
