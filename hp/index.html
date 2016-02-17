@@ -29,6 +29,7 @@ header, nav, section, article, footer {
   <script src="rweasing1.js"></script>
   <script src="roundabout.js"></script>
   <script src="behaviour.js"></script>
+  <script src="followtheclick.js"></script>
 </head>
 <body>
   <div id="cont">
@@ -78,6 +79,13 @@ header, nav, section, article, footer {
   <div class="rwdiv" id="behaviour"></div>
   </article>
 
+  <article>
+  <h2>Follow the Click</h2>
+  <p>Statemachine with an intercactive state.</p>
+  <p><a href="https://github.com/wwagner4/elm-random-walk">Source code</a></p>
+  <div class="rwdiv" id="followtheclick"></div>
+  </article>
+
   </section>
 
   <footer>
@@ -95,6 +103,8 @@ header, nav, section, article, footer {
       Elm.embed(Elm.Roundabout, rweasingDiv);
       var rweasingDiv = document.getElementById('behaviour');
       Elm.embed(Elm.Behaviour, rweasingDiv);
+      var rweasingDiv = document.getElementById('followtheclick');
+      Elm.embed(Elm.FollowTheClick, rweasingDiv);
   </script>
 
 
