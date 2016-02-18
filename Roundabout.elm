@@ -16,8 +16,8 @@ type alias Model =
   , duration : Time }
 
 
-newState : State -> Time -> Time -> Model
-newState state start duration =
+model : State -> Time -> Time -> Model
+model state start duration =
   { state = state
   , start = start
   , duration = duration }
@@ -25,32 +25,32 @@ newState state start duration =
 
 type State = A | B | C
 
-type StateOfState = StateOfStateReady | StateOfStateProcessing
+type ModelState = Ready | Processing
 
 
 updateState : Time -> Maybe Model -> Maybe Model
 updateState time maybeState =
   let
-    sig : Model -> StateOfState
+    sig : Model -> ModelState
     sig state =
-      if ((time - state.start) > state.duration) then StateOfStateReady
-      else StateOfStateProcessing
+      if ((time - state.start) > state.duration) then Ready
+      else Processing
 
 
     state = withDefault (initial time) maybeState
     nextState = case sig state of
-      StateOfStateReady ->
+      Ready ->
         case state.state of
-          A -> newState B time (Time.second * 2)
-          B -> newState C time (Time.second * 0.5)
-          C -> newState A time (Time.second * 0.2)
-      StateOfStateProcessing -> state
+          A -> model B time (Time.second * 2)
+          B -> model C time (Time.second * 0.5)
+          C -> model A time (Time.second * 0.2)
+      Processing -> state
   in
     Just nextState
 
 
 initial : Time -> Model
-initial time = newState A time Time.second
+initial time = model A time Time.second
 
 
 view : (Int, Int) -> Maybe Model -> Element
