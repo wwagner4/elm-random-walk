@@ -37,17 +37,13 @@ updateState time maybeState =
       else SigProcessing
 
 
-    nextOnReady : State -> State
-    nextOnReady state =
-      case state.spec of
-        A -> newState B time (Time.second * 2)
-        B -> newState C time (Time.second * 0.5)
-        C -> newState A time (Time.second * 0.2)
-
-
     state = withDefault (initial time) maybeState
     nextState = case sig state of
-      SigReady -> nextOnReady state
+      SigReady ->
+        case state.spec of
+          A -> newState B time (Time.second * 2)
+          B -> newState C time (Time.second * 0.5)
+          C -> newState A time (Time.second * 0.2)
       SigProcessing -> state
   in
     Just nextState
@@ -64,12 +60,12 @@ view (w, h) maybeState =
     viewState state =
       let
         height = 200
-        bgForm color = square height
+        (txt, color) = case state.spec of
+          A -> (fromString "A", Color.lightOrange )
+          B -> (fromString "B", Color.lightGreen )
+          C -> (fromString "C", Color.lightYellow )
+        bgForm = square height
           |> filled color
-        (txt, bgColorForm) = case state.spec of
-          A -> (fromString "A", bgForm Color.lightOrange )
-          B -> (fromString "B", bgForm Color.lightGreen )
-          C -> (fromString "C", bgForm Color.lightYellow )
         txtForm = txt
           |> Text.height height
           |> monospace
@@ -77,7 +73,7 @@ view (w, h) maybeState =
           |> toForm
           |> move (0, height / 30)
       in
-        [bgColorForm, txtForm]
+        [bgForm, txtForm]
 
 
 
