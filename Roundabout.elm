@@ -10,13 +10,13 @@ import Window exposing (..)
 import Color exposing (..)
 
 
-type alias State =
+type alias Model =
   { spec : StateSpec
   , start : Time
   , duration : Time }
 
 
-newState : StateSpec -> Time -> Time -> State
+newState : StateSpec -> Time -> Time -> Model
 newState spec start duration =
   { spec = spec
   , start = start
@@ -28,10 +28,10 @@ type StateSpec = A | B | C
 type Sig = SigReady | SigProcessing
 
 
-updateState : Time -> Maybe State -> Maybe State
+updateState : Time -> Maybe Model -> Maybe Model
 updateState time maybeState =
   let
-    sig : State -> Sig
+    sig : Model -> Sig
     sig state =
       if ((time - state.start) > state.duration) then SigReady
       else SigProcessing
@@ -49,15 +49,15 @@ updateState time maybeState =
     Just nextState
 
 
-initial : Time -> State
+initial : Time -> Model
 initial time = newState A time Time.second
 
 
-view : (Int, Int) -> Maybe State -> Element
+view : (Int, Int) -> Maybe Model -> Element
 view (w, h) maybeState =
   let
-    viewState : State -> List Form
-    viewState state =
+    viewModel : Model -> List Form
+    viewModel state =
       let
         height = 200
         (txt, color) = case state.spec of
@@ -79,13 +79,13 @@ view (w, h) maybeState =
 
     elems = case maybeState of
       Nothing -> []
-      Just state -> viewState state
+      Just state -> viewModel state
   in
     collage w h elems
 
 
-stateSignal : Signal (Maybe State)
-stateSignal = Signal.foldp updateState Nothing (every (Time.second / 10))
+modelSig : Signal (Maybe Model)
+modelSig = Signal.foldp updateState Nothing (every (Time.second / 10))
 
 
-main = Signal.map2 view dimensions stateSignal
+main = Signal.map2 view dimensions modelSig
