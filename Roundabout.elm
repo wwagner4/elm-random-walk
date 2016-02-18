@@ -25,26 +25,26 @@ newState state start duration =
 
 type State = A | B | C
 
-type Sig = SigReady | SigProcessing
+type StateOfState = StateOfStateReady | StateOfStateProcessing
 
 
 updateState : Time -> Maybe Model -> Maybe Model
 updateState time maybeState =
   let
-    sig : Model -> Sig
+    sig : Model -> StateOfState
     sig state =
-      if ((time - state.start) > state.duration) then SigReady
-      else SigProcessing
+      if ((time - state.start) > state.duration) then StateOfStateReady
+      else StateOfStateProcessing
 
 
     state = withDefault (initial time) maybeState
     nextState = case sig state of
-      SigReady ->
+      StateOfStateReady ->
         case state.state of
           A -> newState B time (Time.second * 2)
           B -> newState C time (Time.second * 0.5)
           C -> newState A time (Time.second * 0.2)
-      SigProcessing -> state
+      StateOfStateProcessing -> state
   in
     Just nextState
 
