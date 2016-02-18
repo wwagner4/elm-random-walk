@@ -11,19 +11,19 @@ import Color exposing (..)
 
 
 type alias Model =
-  { spec : StateSpec
+  { state : State
   , start : Time
   , duration : Time }
 
 
-newState : StateSpec -> Time -> Time -> Model
-newState spec start duration =
-  { spec = spec
+newState : State -> Time -> Time -> Model
+newState state start duration =
+  { state = state
   , start = start
   , duration = duration }
 
 
-type StateSpec = A | B | C
+type State = A | B | C
 
 type Sig = SigReady | SigProcessing
 
@@ -40,7 +40,7 @@ updateState time maybeState =
     state = withDefault (initial time) maybeState
     nextState = case sig state of
       SigReady ->
-        case state.spec of
+        case state.state of
           A -> newState B time (Time.second * 2)
           B -> newState C time (Time.second * 0.5)
           C -> newState A time (Time.second * 0.2)
@@ -57,10 +57,10 @@ view : (Int, Int) -> Maybe Model -> Element
 view (w, h) maybeState =
   let
     viewModel : Model -> List Form
-    viewModel state =
+    viewModel model =
       let
         height = 200
-        (txt, color) = case state.spec of
+        (txt, color) = case model.state of
           A -> (fromString "A", Color.lightOrange )
           B -> (fromString "B", Color.lightGreen )
           C -> (fromString "C", Color.lightYellow )
@@ -79,7 +79,7 @@ view (w, h) maybeState =
 
     elems = case maybeState of
       Nothing -> []
-      Just state -> viewModel state
+      Just model -> viewModel model
   in
     collage w h elems
 
