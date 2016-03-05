@@ -67,11 +67,10 @@ view (w, h) maybeState =
         bgForm = square height
           |> filled color
         txtForm = txt
-          |> Text.height height
-          |> monospace
+          |> Text.height (height * 0.7)
           |> centered
           |> toForm
-          |> move (0, height / 30)
+          |> move(0, -height * 0.07)
       in
         [bgForm, txtForm]
 

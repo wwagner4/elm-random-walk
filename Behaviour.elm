@@ -134,17 +134,16 @@ view (w, h) maybeModel =
         size = 100
 
         bgForm : Color -> Form
-        bgForm color = circle (size * 0.6)
+        bgForm color = square (size * 1.4)
           |> filled color
 
         txtForm : String -> Form
         txtForm txt = txt
           |> fromString
           |> Text.height size
-          |> monospace
           |> centered
           |> toForm
-          |> move (0, size * 0.045)
+          |> move(0, -size * 0.1)
 
         grp = case model.state of
           A _ -> group [bgForm Color.red, txtForm "A"]

@@ -183,20 +183,19 @@ view (w, h) maybeModel =
     viewModel : Model -> List Form
     viewModel model =
       let
-        size = 150
+        size = 100
 
         bgForm : Color -> Form
-        bgForm color = square (size * 0.7)
+        bgForm color = square (size * 1.1)
           |> filled color
 
         txtForm : String -> Form
         txtForm txt = txt
           |> fromString
           |> Text.height size
-          |> monospace
           |> centered
           |> toForm
-          |> move (0, size * 0.04)
+          |> move(0, -size * 0.1)
 
         grp = case model.state of
           A _ -> group [bgForm Color.red, txtForm "A"]
